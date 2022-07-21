@@ -1,0 +1,1 @@
+source ../.env && forge coverage --rpc-url $RINKEBY_RPC_URL --match-contract Unit -vvvv
