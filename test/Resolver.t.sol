@@ -19,7 +19,7 @@ contract BENSYCTest is Test {
     using Create1 for address;
     function setUp() public {
         address _addr = ENS.owner(_bensyc.DomainHash());
-        require(_addr != address(0), "ZERO");
+        require(_addr != address(0), "ZERO ADDR");
         //console.log("1ADDR:", _addr);
         vm.prank(_addr);
         ENS.setApprovalForAll(address(_bensyc), true);

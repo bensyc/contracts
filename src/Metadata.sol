@@ -32,7 +32,7 @@ contract Metadata {
         _output[fill - 1] = _output[0];
     }
 
-    function image(uint id) internal view returns(string memory) {
+    function image(uint id) public view returns(string memory) {
         (string[] memory _arr, string memory _list) = toHexColor(abi.encodePacked(keccak256(abi.encodePacked(id))));
         string memory _stop;
         for (uint i = 0; i < 10; i++) {
