@@ -8,5 +8,4 @@ broadcast/*/*/*
 out/*/*
 !out/BENSYC.sol/*
 !out/Resolver.sol/*
-!out/Metadata.sol/*
 !out/XCCIP.sol/*

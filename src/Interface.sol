@@ -76,8 +76,7 @@ interface iERC721 {
 
     function balanceOf(address _owner) external view returns (uint256);
     function ownerOf(uint256 _tokenId) external view returns (address);
-    function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes memory data
-    ) external payable;
+    function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes memory data) external payable;
     function safeTransferFrom(address _from, address _to, uint256 _tokenId) external payable;
     function transferFrom(address _from, address _to, uint256 _tokenId) external payable;
     function approve(address _approved, uint256 _tokenId) external payable;
@@ -98,7 +97,10 @@ interface iERC721Metadata {
 interface iBENSYC{
     function totalSupply() external view returns(uint);
     function Dev() external view returns(address);
-    //function HashMap(bytes32 node) external view returns(bytes32);
+    function Namehash2ID(bytes32 node) external view returns(uint);
+    function ID2Namehash(uint256 id) external view returns(bytes32);
+    function ownerOf(uint256 id) external view returns (address);
+
 }
 
 interface iToken{

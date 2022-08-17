@@ -1,12 +1,12 @@
 //SPDX-License-Identifier: WTFPL v6.9
 pragma solidity >0.8.0;
 import "src/Interface.sol";
+import "src/Util.sol";
 
 abstract contract Base {
 
     iBENSYC public BENSYC;
     iENS public ENS;
-
     fallback() external payable {
         revert();
     }
@@ -15,16 +15,17 @@ abstract contract Base {
         revert();
     }
     
-    function withdraw() external {
+    function withdrawETH() external {
         require(msg.sender == BENSYC.Dev());
         payable(msg.sender).transfer(address(this).balance);
     }
     
-    function withdraw(address _token, uint _bal) external {
+    function withdrawToken(address _token, uint _bal) external {
         require(msg.sender == BENSYC.Dev());
         iToken(_token).transferFrom(address(this), msg.sender, _bal);
     }
 
+    // TESENET ONLY : Remove for mainnet
     function DESTROY() external {
         require(msg.sender == BENSYC.Dev());
         selfdestruct(payable(msg.sender));
@@ -37,7 +38,8 @@ contract XCCIP is Base {
     
     bytes32 public immutable secondaryLabelHash = keccak256(bytes("bensyc"));
     bytes32 public immutable secondaryDomainHash;
-
+    bytes32 public immutable baseHash;
+    
     //bytes32 public immutable primaryLabelHash = keccak256(bytes("boredensyachtclub"));
     bytes32 public immutable primaryDomainHash;
     
@@ -47,88 +49,87 @@ contract XCCIP is Base {
     error InvalidParentDomain(string str);
     error InvalidNamehash(bytes32 expected, bytes32 provided);
     error RequestError(bytes32 expected, bytes32 check, bytes data, uint blknum, bytes result);
-    error StaticCallFailed(address resolver, bytes _call);
+    error StaticCallFailed(address resolver, bytes _call, bytes _error);
     
     function supportsInterface(bytes4 sig) external pure returns(bool){
         return (sig == XCCIP.resolve.selector || sig == XCCIP.supportsInterface.selector);
     }
     
     constructor(address _bensyc) {
-        bytes32 _base = keccak256(abi.encodePacked(bytes32(0), keccak256("eth")));
-        secondaryDomainHash = keccak256(abi.encodePacked(_base, secondaryLabelHash));
-        primaryDomainHash = keccak256(abi.encodePacked(_base,  keccak256(bytes("boredensyachtclub"))));
+        baseHash = keccak256(abi.encodePacked(bytes32(0), keccak256("eth")));
+        secondaryDomainHash = keccak256(abi.encodePacked(baseHash, secondaryLabelHash));
+        primaryDomainHash = keccak256(abi.encodePacked(baseHash,  keccak256(bytes("boredensyachtclub"))));
         BENSYC = iBENSYC(_bensyc);
         ENS = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
     }
 
-    function dnsDecode(bytes calldata name) public view returns(bytes32) {
+    function dnsDecode(bytes calldata name) public view returns(bytes32, bool) {
         uint i;
         uint j;
-        bytes[] memory labels = new bytes[](7);
-
+        bytes[] memory labels = new bytes[](4);
+        uint len;
         while(name[i] != 0x0){
-            uint len = uint8(bytes1(name[i : ++i]));
-            labels[j] =  name[i : i += len];
-            j++;
+            unchecked {
+                len = uint8(bytes1(name[i : ++i]));
+                labels[j] =  name[i : i += len];
+                ++j;
+            }
         }
         
-        if(keccak256(labels[1]) != secondaryLabelHash){
-            revert InvalidParentDomain(string(labels[1]));
-        }
         i = 0;
-        for(j = 0; j < labels[0].length; j++){
+        for(j = 0; j < labels[0].length;){
             if(labels[0][j] < 0x30 || labels[0][j] > 0x39){
-                revert InvalidTokenID(string(labels[0]), i);
+                return(keccak256(labels[0]), false);
             }
-            i = (i * 10) + (uint8(labels[0][j]) - 48);
+            unchecked {
+                i = (i * 10) + (uint8(labels[0][j]) - 48);
+                ++j;
+            }
         }
         if(i >= BENSYC.totalSupply()){
             revert InvalidTokenID(string(labels[0]), 10_000);
         }
-        return keccak256(labels[0]);
+        return(keccak256(labels[0]), true);
     }
 
     function resolve(bytes calldata name, bytes calldata data) external view returns(bytes memory) {
         bytes32 _callhash;
+        bool isNft;
         if(bytes32(data[4:36]) == secondaryDomainHash){
             _callhash = primaryDomainHash;
         } else {
-            _callhash = dnsDecode(name);
-            if(keccak256(abi.encodePacked(secondaryDomainHash, _callhash)) != bytes32(data[4:36])){
-                // extra check
-                revert InvalidNamehash(
-                    keccak256(abi.encodePacked(secondaryDomainHash, _callhash)), 
-                    bytes32(data[4:36])
-                );
-            }
-            _callhash = keccak256(abi.encodePacked(primaryDomainHash, _callhash));
+            (_callhash, isNft) = dnsDecode(name);
+            _callhash = isNft ? 
+                keccak256(abi.encodePacked(primaryDomainHash, _callhash)) : 
+                keccak256(abi.encodePacked(_callhash, baseHash));
         }
         
 
-        bytes memory _result = getResult(_callhash, data);  
-        string[] memory _urls = new string[](1);
+        bytes memory _result = getResult(_callhash, data);
+        string[] memory _urls = new string[](2);
         _urls[0] = 'data:text/plain,{"data":"{data}"}';
+        _urls[1] = 'data:application/json,{"data":"{data}"}';
         revert OffchainLookup(
             address(this),
             _urls,
-            _result,
+            _result, // {data} field
             XCCIP.resolveWithoutProof.selector,
             abi.encode(keccak256(abi.encodePacked(msg.sender, address(this), data, block.number, _result)), block.number, data)
         );
     }
-    
-    function getResult(bytes32 _primaryNamehash, bytes calldata data) public view returns(bytes memory){
-        ///bytes32 _primaryNamehash = (_labelhash == secondaryDomainHash)? 
-        //    primaryDomainHash : keccak256(abi.encodePacked(primaryDomainHash, _labelhash));
-
+    error ResolverNotSet(bytes32 node, bytes data);
+    function getResult(bytes32 _callhash, bytes calldata data) public view returns(bytes memory){
         bytes memory _call =  (data.length > 36) ? 
-            abi.encodePacked(data[:4], _primaryNamehash, data[36:]) : 
-            abi.encodePacked(data[:4], _primaryNamehash);
+            abi.encodePacked(data[:4], _callhash, data[36:]) : 
+            abi.encodePacked(data[:4], _callhash);
 
-        address _resolver = ENS.resolver(_primaryNamehash);
+        address _resolver = ENS.resolver(_callhash);
+        if(_resolver == address(0)) {
+            revert ResolverNotSet(_callhash, _call);
+        }
         (bool _success, bytes memory _result) = _resolver.staticcall(_call);  
         if (!_success || _result.length == 0){
-            revert StaticCallFailed(_resolver, _call);
+            revert StaticCallFailed(_resolver, _call, _result);
         }
         return _result;
     }

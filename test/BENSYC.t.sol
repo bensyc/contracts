@@ -4,7 +4,6 @@ pragma solidity ^ 0.8 .13;
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 import "src/BENSYC.sol";
-import "src/Metadata.sol";
 import "src/Resolver.sol";
 import "src/XCCIP.sol";
 
@@ -27,18 +26,17 @@ contract BENSYCTest is Test {
     }
 
     BoredENSYachtClub public _bensyc;
-    Metadata public _metadata;
-    Resolver public _resolver;
+    //Resolver public _resolver;
     XCCIP public _xccip;
     uint public mintingPrice;
     iENS public ENS = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
     NotReceiver721 public _notReceiver;
     constructor() {
-        _metadata = new Metadata();
-        address bensycAddr = address(this).create1(vm.getNonce(address(this))+1);
-        _resolver = new Resolver(bensycAddr);
-        _bensyc = new BoredENSYachtClub(address(_metadata), address(_resolver), 100);
-        require(address(_bensyc) == bensycAddr, "TEST: ADDRESS NOT MATCHING");
+        //address bensycAddr = address(this).create1(vm.getNonce(address(this))+1);
+        //_resolver = new Resolver(bensycAddr);
+        _bensyc = new BoredENSYachtClub(100);
+        //_resolver = Resolver(payable(_bensyc.DefaultResolver()));
+        //require(address(_bensyc) == bensycAddr, "TEST: ADDRESS NOT MATCHING");
         _notReceiver = new NotReceiver721();
         mintingPrice = _bensyc.mintingPrice();
     }
@@ -65,7 +63,7 @@ contract BENSYCTest is Test {
         assertEq(_bensyc.ownerOf(0), address(this));
         assertEq(_bensyc.balanceOf(address(this)), 1);
         assertEq(ENS.owner(_bensyc.ID2Namehash(0)), address(this));
-        assertEq(ENS.resolver(_bensyc.ID2Namehash(0)), (_bensyc.DefaultResolver()));
+        assertEq(ENS.resolver(_bensyc.ID2Namehash(0)), address(_bensyc.DefaultResolver()));
     }
 
     function testMintingSolo100() public {
@@ -75,7 +73,7 @@ contract BENSYCTest is Test {
             }();
             assertEq(_bensyc.ownerOf(i), address(this));
             assertEq(ENS.owner(_bensyc.ID2Namehash(i)), address(this));
-            assertEq(ENS.resolver(_bensyc.ID2Namehash(i)), _bensyc.DefaultResolver());
+            assertEq(ENS.resolver(_bensyc.ID2Namehash(i)), address(_bensyc.DefaultResolver()));
         }
     }
 
@@ -86,7 +84,7 @@ contract BENSYCTest is Test {
         for (uint i = 0; i < 10; i++) {
             assertEq(_bensyc.ownerOf(i), address(this));
             assertEq(ENS.owner(_bensyc.ID2Namehash(i)), address(this));
-            assertEq(ENS.resolver(_bensyc.ID2Namehash(i)), _bensyc.DefaultResolver());
+            assertEq(ENS.resolver(_bensyc.ID2Namehash(i)), address(_bensyc.DefaultResolver()));
         }
     }
 
@@ -99,7 +97,7 @@ contract BENSYCTest is Test {
         for (uint j = 0; j < 100; j++) {
             assertEq(_bensyc.ownerOf(j), address(this));
             assertEq(ENS.owner(_bensyc.ID2Namehash(j)), address(this));
-            assertEq(ENS.resolver(_bensyc.ID2Namehash(j)), _bensyc.DefaultResolver());
+            assertEq(ENS.resolver(_bensyc.ID2Namehash(j)), address(_bensyc.DefaultResolver()));
             j *= 3;
         }
         console.log(_bensyc.totalSupply());

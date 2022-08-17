@@ -2,20 +2,23 @@
 pragma solidity ^0.8.13;
 import "forge-std/Script.sol";
 import "src/BENSYC.sol";
-import "src/Metadata.sol";
-import "src/Resolver.sol";
+import "src/Interface.sol";
 import "src/XCCIP.sol";
-import "test/Create1.sol";
+//import "test/Create1.sol";
 contract BENSYCScript is Script {
-    using Create1 for address;
+    //using Create1 for address;
     function run() external {
         vm.startBroadcast();
-        Metadata metadata = new Metadata();
-        address bensycAddr = address(0x25614B96A0A0Df3B05402089a00f0E5B5563a120).create1(vm.getNonce(address(0x25614B96A0A0Df3B05402089a00f0E5B5563a120))+1);
-        Resolver resolver = new Resolver(bensycAddr);
-        BoredENSYachtClub bensyc = new BoredENSYachtClub(address(metadata), address(resolver), 1e4);
-        require(address(bensyc) == bensycAddr, "TEST: ADDRESS NOT MATCHING");
-        XCCIP xccip = new XCCIP(bensycAddr);
+        //address deployer = address(msg.sender);
+        //address bensycAddr = deployer.create1(vm.getNonce(deployer)+1);
+        //Resolver resolver = new Resolver(bensycAddr);
+        BoredENSYachtClub _bensyc = new BoredENSYachtClub(100);
+        //require(address(bensyc) == bensycAddr, "TEST: ADDRESS NOT MATCHING");
+        iENS _ens = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
+        //bytes32 _domainHash = _bensyc.DomainHash();
+        //_ens.setResolver(_domainHash, address(_bensyc));
+        //_ens.setApprovalForAll(address(_bensyc), true);
+        XCCIP xccip = new XCCIP(address(_bensyc));
         vm.stopBroadcast();
     }
 }
