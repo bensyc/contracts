@@ -14,7 +14,7 @@ contract BENSYCScript is Script {
         //Resolver resolver = new Resolver(bensycAddr);
         BoredENSYachtClub _bensyc = new BoredENSYachtClub(100);
         //require(address(bensyc) == bensycAddr, "TEST: ADDRESS NOT MATCHING");
-        iENS _ens = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
+        //iENS _ens = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
         //bytes32 _domainHash = _bensyc.DomainHash();
         //_ens.setResolver(_domainHash, address(_bensyc));
         //_ens.setApprovalForAll(address(_bensyc), true);

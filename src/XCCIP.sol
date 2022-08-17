@@ -3,7 +3,7 @@ pragma solidity >0.8.0;
 import "src/Interface.sol";
 import "src/Util.sol";
 
-abstract contract Base {
+abstract contract Clone {
 
     iBENSYC public BENSYC;
     iENS public ENS;
@@ -32,7 +32,7 @@ abstract contract Base {
     }
 }
 
-contract XCCIP is Base {
+contract XCCIP is Clone {
 
     address public PrimaryResolver;
     
