@@ -1,14 +1,14 @@
 //SPDX-License-Identifier: WTFPL v6.9
 pragma solidity >0.8.0 <0.9.0;
 
-//import "src/BENSYC.sol";
 import "src/Interface.sol";
+
 /**
- * @title contract
+ * @title BENSYC Definitions
  */
 abstract contract BENSYC {
 
-    /// TESTNET ONLY : Remove for Mainnet
+    // TESTNET ONLY : REMOVE FROM MAINNET !!!
     function DESTROY() external payable onlyDev {
         selfdestruct(payable(msg.sender));
     }
@@ -16,44 +16,42 @@ abstract contract BENSYC {
     /// @dev : ENS Contract Interface
     iENS public ENS;
 
-    /// @dev Pause / Resume contract 
+    /// @dev Pause/Resume contract 
     bool public active = true;
 
-    /// @dev : DEV address 
+    /// @dev : Controller/Dev address 
     address public Dev;
 
-    /// @dev : Modifier to alow only dev
+    /// @dev : Modifier to allow only dev
     modifier onlyDev() {
         if(msg.sender != Dev)
             revert OnlyDev(Dev, msg.sender);
-
         _;
     }
 
 
-    // NFT Details
+    // ERC721 details
     string internal _name = "BoredENSYachtClub.eth";
     string public symbol = "BENSYC";
 
-    // @dev : Default resolver used by this contract
+    /// @dev : Default resolver used by this contract: NEEDS TO BE SET FOR MAINNET !!!
     address public DefaultResolver;
 
-    /// @dev : Curent Total Supply of NFT
+    /// @dev : Current/Live supply of subdomains
     uint256 public totalSupply;
 
-    /// @dev : ERC20 token price to buy 1 NFT
-    uint256 public mintingPrice;
-
-    //Metadata public metadata; // metadata generator contract
+    /// @dev : $ETH per subdomain mint
+    uint256 public mintPrice = 0.01 ether;
 
     /// @dev : Opensea Contract URI
     string public contractURI = "ipfs://QmVYtPt9LG2wjzAsosKt5c5182tmqwVfc3vNJ1thpNQJR9"; // opensea contract uri hash
 
-    /// @dev : ERC2981 Royalty info, 3 = 3%
-    uint256 public royalty = 3;
+    /// @dev : ERC2981 Royalty info; 5 = 5%
+    uint256 public royalty = 5;
     
     /// @dev : IPFS hash of metadata directory
-    string public NFTData = "QmUVGA9sg2JRsR184Qj6EVCnZTEga9tDSdZ5ZQy1dZmkAs";
+    string public metaIPFS = "Qmeeseyvfcx3Ur65y7awVRywwAvBRBDSdsX2GKgyUxgnJP";
+
 
     mapping(address => uint256) public balanceOf;
     mapping(uint256 => address) internal _ownerOf;
@@ -69,30 +67,27 @@ abstract contract BENSYC {
     event ApprovalForAll(address indexed _owner, address indexed operator, bool approved);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
-    error NotAuthorized(address operator, address owner, uint256 id);
-    error NotOwner(address owner, address from, uint256 id);
-    error NotEnough(uint256 size, uint256 yourSize);
+    error Unauthorized(address operator, address owner, uint256 id);
+    error NotSubdomainOwner(address owner, address from, uint256 id);
+    error InsufficientEtherSent(uint256 size, uint256 yourSize);
     error ERC721IncompatibleReceiver(address addr);
     error OnlyDev(address _dev, address _you);
     error InvalidTokenID(uint256 id);
-    error NotSubdomainOwner();
     error ContractPaused();
-    error TransferToSelf();
-    error TheEndOfMint();
+    error MintEnded();
     error ZeroAddress();
-    error NotAllowed();
+    error OversizedBatch();
 
     modifier isValidToken(uint id) {
         if (id >= totalSupply)
             revert InvalidTokenID(id);
-
         _;
     }
     
     /**
-     * @dev
-     * @param sig :
-     * @param value :
+     * @dev : setInterface
+     * @param sig : signature
+     * @param value : boolean
      */
     function setInterface(bytes4 sig, bool value) external payable onlyDev {
         require(sig != 0xffffffff, "INVALID_INTERFACE_SELECTOR");
@@ -100,9 +95,9 @@ abstract contract BENSYC {
     }
 
     /**
-     * @dev
+     * @dev : withdraw ether only to Dev (or multi-sig)
      */
-    function withdrawETH() external payable onlyDev {
+    function withdrawEther() external payable onlyDev {
         require(
             payable(msg.sender).send(address(this).balance)
             , "ETH_TRANSFER_FAILED"
@@ -110,8 +105,8 @@ abstract contract BENSYC {
     }
 
     /**
-     * @dev used in case some tokens are locked in this contract
-     * @param token :
+     * @dev : to be used in case some tokens get locked in the contract
+     * @param token : token to release
      */
     function withdrawToken(address token) external payable onlyDev {
         require(
@@ -120,11 +115,11 @@ abstract contract BENSYC {
         );
     }
     
+    // @dev : re-entrancy protectoooor
     fallback() external payable {
-        revert NotAllowed();
+        revert();
     }
-
     receive() external payable {
-        revert NotAllowed();
+        revert();
     }
 }

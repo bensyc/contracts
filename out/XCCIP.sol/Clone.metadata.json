@@ -1,0 +1,142 @@
+{
+  "compiler": {
+    "version": "0.8.16+commit.07a7930e"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "stateMutability": "payable",
+        "type": "fallback"
+      },
+      {
+        "inputs": [],
+        "name": "BENSYC",
+        "outputs": [
+          {
+            "internalType": "contract iBENSYC",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "DESTROY",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "ENS",
+        "outputs": [
+          {
+            "internalType": "contract iENS",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "withdrawEther",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_bal",
+            "type": "uint256"
+          }
+        ],
+        "name": "withdrawToken",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "stateMutability": "payable",
+        "type": "receive"
+      }
+    ],
+    "devdoc": {
+      "kind": "dev",
+      "methods": {
+        "withdrawEther()": {
+          "details": ": withdraw ether only to Dev (or multi-sig)"
+        },
+        "withdrawToken(address,uint256)": {
+          "details": ": to be used in case some tokens get locked in the contract",
+          "params": {
+            "_bal": ": amount to release",
+            "_token": ": token to release"
+          }
+        }
+      },
+      "version": 1
+    },
+    "userdoc": {
+      "kind": "user",
+      "methods": {},
+      "version": 1
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "src/XCCIP.sol": "Clone"
+    },
+    "evmVersion": "london",
+    "libraries": {},
+    "metadata": {
+      "bytecodeHash": "ipfs"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 6666
+    },
+    "remappings": [
+      ":ds-test/=lib/forge-std/lib/ds-test/src/",
+      ":forge-std/=lib/forge-std/src/"
+    ]
+  },
+  "sources": {
+    "src/Interface.sol": {
+      "keccak256": "0xfc6beeebd98ac1af96e397169367c21d5fc1d437ab3b1bcbebf438bcc3e44f80",
+      "license": "WTFPL v6.9",
+      "urls": [
+        "bzz-raw://b74d51af382e378a430bbefa8171960e1c82cd9e8ad70f478d53a2e11381a3d1",
+        "dweb:/ipfs/QmPAXwhc6JvQBgbcSNpeeRzMBuwJf7SoZiLpiEkZXD7sFV"
+      ]
+    },
+    "src/Util.sol": {
+      "keccak256": "0x591775a2a931be3a66685902710b7de65bbe69a848dd2ade299c0f4bbe1773dd",
+      "license": "WTFPL v6.9",
+      "urls": [
+        "bzz-raw://5a4b49393e31ccb57ecf89a2924efde81ac4c7b40c4c17d1129b6675a1b8c37f",
+        "dweb:/ipfs/QmR9VfUNE7WEduVRrRoQetUdtTkqweMhzew5L4HDsEC43i"
+      ]
+    },
+    "src/XCCIP.sol": {
+      "keccak256": "0x22ffb2876429c1a035e32d62946e4880425390cb3e95031e92e8c233a779cfa1",
+      "license": "WTFPL v6.9",
+      "urls": [
+        "bzz-raw://02e871628c16e8a625b36fd48dadf06f23087b71afb07c55e73d01d12b639b0d",
+        "dweb:/ipfs/QmSfezRuj2nYh5QvZ4QNTwY5ZERJzi8XZwcMVKi1oTrm5i"
+      ]
+    }
+  },
+  "version": 1
+}

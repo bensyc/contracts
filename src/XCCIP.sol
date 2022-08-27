@@ -7,25 +7,34 @@ abstract contract Clone {
 
     iBENSYC public BENSYC;
     iENS public ENS;
+
+    // @dev : re-entrancy protectoooor
     fallback() external payable {
         revert();
     }
-
     receive() external payable{
         revert();
     }
     
-    function withdrawETH() external {
+    /**
+     * @dev : withdraw ether only to Dev (or multi-sig)
+     */
+    function withdrawEther() external {
         require(msg.sender == BENSYC.Dev());
         payable(msg.sender).transfer(address(this).balance);
     }
     
+     /**
+     * @dev : to be used in case some tokens get locked in the contract
+     * @param _token : token to release
+     * @param _bal : amount to release
+     */
     function withdrawToken(address _token, uint _bal) external {
         require(msg.sender == BENSYC.Dev());
         iToken(_token).transferFrom(address(this), msg.sender, _bal);
     }
 
-    // TESENET ONLY : Remove for mainnet
+    // TESTNET ONLY : REMOVE FROM MAINNET !!!
     function DESTROY() external {
         require(msg.sender == BENSYC.Dev());
         selfdestruct(payable(msg.sender));

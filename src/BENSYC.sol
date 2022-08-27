@@ -7,57 +7,53 @@ import "src/Util.sol";
 import "src/Base.sol";
 
 /**
- * @summary:
- * @author:
+ * @summary: Core functions of Bored ENS Yacht Club (BENSYC)
+ * @author: 0xc0de4c0ffee, sshmatrix
  */
 
 
 /**
- * @title contract
+ * @title BENSYC Core
  */
 contract BoredENSYachtClub is BENSYC, Resolver {
     using Util for uint256;
     using Util for bytes;
 
-    // @dev : Maximum supply of NFT
-    uint256 public immutable maxSupply;
+    // @dev : maximum supply of subdomains
+    uint256 public immutable maxSupply = 100;
 
-    /// @dev : namehash of boredensyacht.eth
+    /// @dev : namehash of 'boredensyachtclub.eth'
     bytes32 public immutable DomainHash;
     
     /**
-     * @dev
-     * @param _resolver :
+     * @dev Constructor
      */
-    constructor(uint _maxSupply) {
+    constructor() {
         Dev = msg.sender;
         ENS = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
         DefaultResolver = address(this);
-        maxSupply = _maxSupply;
-        mintingPrice = 0.01 ether; //$ETH per NFT minting
+        bytes32 _hash = keccak256(abi.encodePacked(bytes32(0), keccak256("eth")));
+        DomainHash = keccak256(abi.encodePacked(_hash, keccak256("boredensyachtclub")));
 
-        bytes32 _hash =
-            keccak256(abi.encodePacked(bytes32(0), keccak256("eth")));
-        DomainHash = keccak256(
-            abi.encodePacked(_hash, keccak256("boredensyachtclub"))
-        );
-        // EIP165
+        // Interface
         supportsInterface[type(iERC165).interfaceId] = true;
         supportsInterface[type(iERC173).interfaceId] = true;
         supportsInterface[type(iERC721Metadata).interfaceId] = true;
         supportsInterface[type(iERC721).interfaceId] = true;
         supportsInterface[type(iERC2981).interfaceId] = true;
     }
+
     /**
-     * @dev EIP721: Token name
-     * @return : String Name of Token
+     * @dev EIP721: token name
+     * @return : token name
      */
     function name() external view returns(string memory){
         return _name;
     }
+
     /**
      * @dev EIP721: returns owner of token ID
-     * @param id : token id to check owner
+     * @param id : token ID 
      * @return : address of owner
      */
     function ownerOf(uint256 id) public view isValidToken(id) returns (address) {
@@ -65,28 +61,27 @@ contract BoredENSYachtClub is BENSYC, Resolver {
     }
 
     /**
-     * @dev 
-     * @param id : token id to check owner
-     * @return : address of owner
+     * @dev returns namehash of token ID
+     * @param id : token ID 
+     * @return : namehash of corresponding subdomain
      */
     function ID2Namehash(uint256 id) public view isValidToken(id) returns (bytes32) {
         return keccak256(abi.encodePacked(DomainHash, ID2Labelhash[id]));
     }
 
     /**
-     * @dev Mint function for single NFT, 
+     * @dev mint() function for single sudomain 
      */
     function mint() external payable {
         if (!active)
             revert ContractPaused();
 
         if (totalSupply > maxSupply)
-            revert TheEndOfMint();
+            revert MintEnded();
 
-        if (msg.value < mintingPrice)
-            revert NotEnough(mintingPrice, msg.value);
-
-
+        if (msg.value < mintPrice)
+            revert InsufficientEtherSent(mintPrice, msg.value);
+        
         uint256 _id = totalSupply;
         bytes32 _labelhash = keccak256(abi.encodePacked(_id.toString()));
         ENS.setSubnodeRecord(
@@ -103,19 +98,26 @@ contract BoredENSYachtClub is BENSYC, Resolver {
     }
 
     /**
-     * @dev
+     * @dev : batchMint() function for sudomains 
+     * @param batchSize : number of subdomains to mint in the batch (maximum batchSize = 12)
      */
-    function batchMint(uint256 num) external payable {
+    function batchMint(uint256 batchSize) external payable {
         if (!active)
             revert ContractPaused();
 
-        if (msg.value < mintingPrice * num)
-            revert NotEnough(mintingPrice * num, msg.value);
+        if (totalSupply > maxSupply)
+            revert MintEnded();
+
+        if (batchSize > 12) // maximum batchSize = 12
+            revert OversizedBatch();
+
+        if (msg.value < mintPrice * batchSize)
+            revert InsufficientEtherSent(mintPrice * batchSize, msg.value);
 
         uint256 _id = totalSupply;
-        uint256 _mint = _id + num;
+        uint256 _mint = _id + batchSize;
         if (_mint > maxSupply)
-            revert TheEndOfMint();
+            revert MintEnded();
         bytes32 _labelhash;
         while (_id < _mint) {
             _labelhash = keccak256(abi.encodePacked(_id.toString()));
@@ -132,15 +134,15 @@ contract BoredENSYachtClub is BENSYC, Resolver {
         }
         unchecked {
             totalSupply = _mint;
-            balanceOf[msg.sender] += num;
+            balanceOf[msg.sender] += batchSize;
         }
     }
 
     /**
-     * @dev
-     * @param from : Address of Sender
-     * @param to : Address of Receiver
-     * @param id : NFT token ID
+     * @dev : generic _transfer function
+     * @param from : address of sender
+     * @param to : address of receiver
+     * @param id : subdomain token ID
      */
     function _transfer(address from, address to, uint256 id, bytes memory data) internal {
         if (!active)
@@ -150,22 +152,22 @@ contract BoredENSYachtClub is BENSYC, Resolver {
             revert ZeroAddress();
 
         if (_ownerOf[id] != from)
-            revert NotOwner(_ownerOf[id], from, id);
+            revert NotSubdomainOwner(_ownerOf[id], from, id);
 
         if (
             msg.sender != _ownerOf[id] 
             && !isApprovedForAll[from][msg.sender] 
             && msg.sender != getApproved[id]
-        ) revert NotAuthorized(msg.sender, from, id);
+        ) revert Unauthorized(msg.sender, from, id);
 
         ENS.setSubnodeOwner(
             DomainHash, ID2Labelhash[id], to
         );
         unchecked {
-            --balanceOf[from]; // subtract from owner
-            ++balanceOf[to]; // add to receiver
+            --balanceOf[from];  // subtract from owner
+            ++balanceOf[to];    // add to receiver
         }
-        _ownerOf[id] = to; // change ownership
+        _ownerOf[id] = to;      // change ownership
         delete getApproved[id]; // reset approved
         if (to.code.length > 0) {
             try iERC721Receiver(to).onERC721Received(msg.sender, from, id, data) returns (bytes4 retval) {
@@ -179,53 +181,53 @@ contract BoredENSYachtClub is BENSYC, Resolver {
     }
 
     /**
-     * @dev : Transfer Function
-     * @param from : From Address
-     * @param to : To Address
-     * @param id : Token ID
+     * @dev : transfer function
+     * @param from : from address
+     * @param to : to address
+     * @param id : token ID
      */
     function transferFrom(address from, address to, uint256 id) external payable {
         _transfer(from, to, id, "");
     }
 
     /**
-     * @dev Safe Transfer From Function with extradata
-     * @param from : From Address
-     * @param to : To Address
-     * @param id : Token ID
-     * @param data : Extradata
+     * @dev : safeTransferFrom function with extra data
+     * @param from : from address
+     * @param to : to address
+     * @param id : token ID
+     * @param data : extra data
      */
     function safeTransferFrom(address from, address to, uint256 id, bytes memory data) external payable {
         _transfer(from, to, id, data);
     }
 
     /**
-     * @dev Safe Transfer From Function
-     * @param from : From Address
-     * @param to : To Address
-     * @param id : Token ID
+     * @dev : safeTransferFrom function
+     * @param from : from address
+     * @param to : to address
+     * @param id : token ID
      */
     function safeTransferFrom(address from, address to, uint256 id) external payable {
         _transfer(from, to, id, "");
     }
 
     /**
-     * @dev
-     * @param approved : Operator Address to be Approved
-     * @param id : Token ID
+     * @dev : grants approval for a token ID
+     * @param approved : operator address to be approved
+     * @param id : token ID
      */
     function approve(address approved, uint256 id) external payable {
         if(msg.sender != _ownerOf[id])
-            revert NotAuthorized(msg.sender, _ownerOf[id], id);
+            revert Unauthorized(msg.sender, _ownerOf[id], id);
 
         getApproved[id] = approved;
         emit Approval(msg.sender, approved, id);
     }
 
     /**
-     * @dev
-     * @param operator : Operator Address to be Approved For ALL
-     * @param approved : Bool to set
+     * @dev : sets approval for all tokens
+     * @param operator : operator address to be approved for all
+     * @param approved : bool to set
      */
     function setApprovalForAll(address operator, bool approved) external payable {
         isApprovedForAll[msg.sender][operator] = approved;
@@ -233,23 +235,23 @@ contract BoredENSYachtClub is BENSYC, Resolver {
     }
 
     /**
-     * @dev
-     * @param id : Token ID
-     * @return : String IPFS path to Metadata .json file
+     * @dev : generate metadata path corresponding to token ID
+     * @param id : token ID
+     * @return : IPFS path to metadata directory
      */
     function tokenURI(uint256 id) external view isValidToken(id) returns (string memory) {
-        return string.concat("ipfs://", NFTData, "/", id.toString(), ".json");
+        return string.concat("ipfs://", metaIPFS, "/", id.toString(), ".json");
     }
 
     /**
-     * @dev
-     * @param id :
-     * @param _salePrice :
-     * @return :
+     * @dev : royalty payment to Dev (or multi-sig)
+     * @param id : token ID
+     * @param _salePrice : sale price
+     * @return : ether amount to be paid as royalty to Dev (or multi-sig)
      */
     function royaltyInfo(uint256 id, uint256 _salePrice) external view returns (address, uint256){
-        id; // silence warning
-        return (Dev, (_salePrice / 100) * royalty);
+        id; //silence warning
+        return (Dev, (_salePrice/100) * royalty);
     }
 
     // Contract Management
@@ -265,30 +267,30 @@ contract BoredENSYachtClub is BENSYC, Resolver {
 
     /**
      * @dev
-     * @return : address of controlling dev/multisig wallet
+     * @return : address of controlling dev or multi-sig wallet
      */
     function owner() external view returns (address) {
         return Dev;
     }
 
     /**
-     * @dev Toggle if contract is active or paused, only Dev can toggle
+     * @dev : Toggle if contract is active or paused, only Dev can toggle
      */
     function toggleActive() external onlyDev {
         active = !active;
     }
 
     /**
-     * @dev
-     * @param _resolver :
+     * @dev : sets Default Resolver
+     * @param _resolver : resolver address
      */
     function setDefaultResolver(address _resolver) external onlyDev {
         DefaultResolver = _resolver;
     }
 
     /**
-     * @dev
-     * @param _contractURI :
+     * @dev : sets OpenSea contractURI 
+     * @param _contractURI : URI value
      */
     function setContractURI(string calldata _contractURI) external onlyDev {
         contractURI = _contractURI;
@@ -296,8 +298,8 @@ contract BoredENSYachtClub is BENSYC, Resolver {
 
     // 
     /**
-     * @dev EIP2981 royalty standard, 1 = 1 %
-     * @param _royalty :
+     * @dev EIP2981 royalty standard
+     * @param _royalty : royalty (1 = 1 %)
      */
     function setRoyalty(uint256 _royalty) external onlyDev {
         royalty = _royalty;

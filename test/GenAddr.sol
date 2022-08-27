@@ -1,13 +1,13 @@
 //SPDX-License-Identifier: WTFPL v6.9
 pragma solidity >= 0.8 .0;
 
-library Create1 {
+library GenAddr {
     /// @notice : https://ethereum.stackexchange.com/questions/760/how-is-the-address-of-an-ethereum-contract-computed
     /// @dev
     /// @param deployer : Address of contract deployer
     /// @param nonce : Nonce for contract deployment
     /// @return Address of contract deployed at nonce
-    function create1(address deployer, uint nonce) internal pure returns(address) {
+    function genAddr(address deployer, uint nonce) internal pure returns(address) {
         bytes memory _hash;
         if (nonce == 0x00) {
             _hash = abi.encodePacked(bytes1(0xd6), bytes1(0x94), deployer, bytes1(0x80));

@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: WTFPL v6.9
 pragma solidity >0.8.0 <0.9.0;
 
-// utility functions
+// Utility functions
 library Util{
         
     /**

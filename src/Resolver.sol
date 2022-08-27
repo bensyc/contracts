@@ -5,7 +5,7 @@ import "src/Interface.sol";
 import "src/Util.sol";
 import "src/Base.sol";
 /**
- * @title contract
+ * @title BENSYC Resolver
  */
 abstract contract Resolver is BENSYC {
     using Util for uint256;
@@ -23,20 +23,27 @@ abstract contract Resolver is BENSYC {
     }
 
     /**
-     * @dev :
-     * @param _content : Default contenthash to set
+     * @dev : sets default contenthash
+     * @param _content : default contenthash to set
      */
     function setDefaultContenthash(bytes memory _content) external onlyDev {
         DefaultContenthash = _content;
     }
 
-    modifier isAuthorised(bytes32 node) {
-        require(msg.sender == ENS.owner(node), "Resolver:Not_Authorised");
+    /**
+     * @dev : verify ownership of subdomain
+     * @param node : subdomain
+     */
+    modifier isOwner(bytes32 node) {
+        require(msg.sender == ENS.owner(node), "Resolver: NOT_AUTHORISED");
         _;
     }
 
     mapping(bytes32 => bytes) internal _contenthash;
-
+    /**
+     * @dev : return default contenhash if no contenthash set
+     * @param node : subdomain
+     */
     function contenthash(bytes32 node) public view returns(bytes memory _hash) {
         _hash = _contenthash[node];
         if (_hash.length == 0) {
@@ -45,47 +52,43 @@ abstract contract Resolver is BENSYC {
     }
 
     event ContenthashChanged(bytes32 indexed node, bytes _contenthash);
-
     /**
-     * @dev
-     * @param node:
-     * @param _hash:
+     * @dev : change contenthash of subdomain
+     * @param node: subdomain
+     * @param _hash: new contenthash
      */
-    function setContenthash(bytes32 node, bytes memory _hash) external isAuthorised(node) {
+    function setContenthash(bytes32 node, bytes memory _hash) external isOwner(node) {
         _contenthash[node] = _hash;
         emit ContenthashChanged(node, _hash);
     }
 
     mapping(bytes32 => mapping(uint256 => bytes)) internal _addrs;
-
-    event AddrChanged(bytes32 indexed node, address a);
-
+    event AddressChanged(bytes32 indexed node, address a);
     /**
-     * @dev
-     * @param node :
-     * @param _addr :
+     * @dev : change address of subdomain
+     * @param node : subdomain
+     * @param _addr : new address
      */
-    function setAddr(bytes32 node, address _addr) external isAuthorised(node) {
+    function setAddress(bytes32 node, address _addr) external isOwner(node) {
         _addrs[node][60] = abi.encodePacked(_addr);
-        emit AddrChanged(node, _addr);
+        emit AddressChanged(node, _addr);
     }
 
-    event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress);
-
+    event CoinAddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress);
     /**
-     * @dev
-     * @param node :
-     * @param coinType :
+     * @dev : change address of subdomain for <coin>
+     * @param node : subdomain
+     * @param coinType : <coin>
      */
-    function setAddr(bytes32 node, uint256 coinType, bytes memory _addr) external isAuthorised(node) {
+    function setCoinAddress(bytes32 node, uint256 coinType, bytes memory _addr) external isOwner(node) {
         _addrs[node][coinType] = _addr;
-        emit AddressChanged(node, coinType, _addr);
+        emit CoinAddressChanged(node, coinType, _addr);
     }
 
     /**
-     * @dev
-     * @param node :
-     * @return :
+     * @dev : resolve subdomain to owner if no address is set
+     * @param node : sundomain
+     * @return : resolved address 
      */
     function addr(bytes32 node) external view returns(address payable) {
         bytes memory _addr = _addrs[node][60];
@@ -95,59 +98,41 @@ abstract contract Resolver is BENSYC {
         return payable(address(uint160(uint256(bytes32(_addr)))));
     }
 
-    /**
-     * @dev
-     * @param node :
-     * @param coinType :
-     * @return _addr :
-     */
-    function addr(bytes32 node, uint256 coinType) external view returns(bytes memory _addr) {
-        _addr = _addrs[node][coinType];
-        if (_addr.length == 0 && coinType == 60) {
-            _addr = abi.encodePacked(_ownerOf[Namehash2ID[node]]);
-        }
-    }
-
     struct PublicKey {
         bytes32 x;
         bytes32 y;
     }
-
     mapping(bytes32 => PublicKey) public pubkey;
-
     event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y);
-
     /**
-     * @dev
-     * @param node :
-     * @param x :
-     * @param y :
+     * @dev : change public key record
+     * @param node : subdomain
+     * @param x : x-coordinate on elliptic curve
+     * @param y : y-coordinate on elliptic curve
      */
-    function setPubkey(bytes32 node, bytes32 x, bytes32 y) external isAuthorised(node) {
+    function setPubkey(bytes32 node, bytes32 x, bytes32 y) external isOwner(node) {
         pubkey[node] = PublicKey(x, y);
         emit PubkeyChanged(node, x, y);
     }
 
     mapping(bytes32 => mapping(string => string)) public _text;
-
-    event TextChanged(bytes32 indexed node, string indexed key, string value);
-
+    event TextRecordChanged(bytes32 indexed node, string indexed key, string value);
     /**
-     * @dev
-     * @param node :
-     * @param key :
-     * @param value :
+     * @dev : change text record
+     * @param node : subdomain
+     * @param key : key to change
+     * @param value : value to set
      */
-    function setText(bytes32 node, string calldata key, string calldata value) external isAuthorised(node) {
+    function setText(bytes32 node, string calldata key, string calldata value) external isOwner(node) {
         _text[node][key] = value;
-        emit TextChanged(node, key, value);
+        emit TextRecordChanged(node, key, value);
     }
 
     /**
-     * @dev
-     * @param node :
-     * @param key :
-     * @return value :
+     * @dev : get text records
+     * @param node : subdomain
+     * @param key : key to query
+     * @return value : value
      */
     function text(bytes32 node, string calldata key) external view returns(string memory value) {
         value = _text[node][key];
@@ -165,21 +150,20 @@ abstract contract Resolver is BENSYC {
     }
 
     event NameChanged(bytes32 indexed node, string name);
-
     /**
-     * @dev
-     * @param node :
-     * @param _name :
+     * @dev : change name record
+     * @param node : subdomain
+     * @param _name : new name
      */
-    function setName(bytes32 node, string calldata _name) external isAuthorised(node) {
+    function setName(bytes32 node, string calldata _name) external isOwner(node) {
         _text[node]["name"] = _name;
         emit NameChanged(node, _name);
     }
 
     /**
-     * @dev
-     * @param node :
-     * @return _name :
+     * @dev : get default name at mint
+     * @param node : subdomain
+     * @return _name : default name
      */
     function name(bytes32 node) external view returns(string memory _name) {
         _name = _text[node]["name"];
