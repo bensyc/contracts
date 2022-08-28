@@ -4,9 +4,11 @@ pragma solidity >0.8.0 <0.9.0;
 import "src/Interface.sol";
 import "src/Util.sol";
 import "src/Base.sol";
+
 /**
  * @title BENSYC Resolver
  */
+
 abstract contract Resolver is BENSYC {
     using Util for uint256;
     using Util for bytes;

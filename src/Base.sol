@@ -6,6 +6,7 @@ import "src/Interface.sol";
 /**
  * @title BENSYC Definitions
  */
+ 
 abstract contract BENSYC {
 
     // TESTNET ONLY : REMOVE FROM MAINNET !!!

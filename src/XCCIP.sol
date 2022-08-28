@@ -3,6 +3,10 @@ pragma solidity >0.8.0;
 import "src/Interface.sol";
 import "src/Util.sol";
 
+/**
+ * @title BENSYC CCIP
+ */
+
 abstract contract Clone {
 
     iBENSYC public BENSYC;
@@ -44,16 +48,12 @@ abstract contract Clone {
 contract XCCIP is Clone {
 
     address public PrimaryResolver;
-    
     bytes32 public immutable secondaryLabelHash = keccak256(bytes("bensyc"));
     bytes32 public immutable secondaryDomainHash;
     bytes32 public immutable baseHash;
-    
-    //bytes32 public immutable primaryLabelHash = keccak256(bytes("boredensyachtclub"));
     bytes32 public immutable primaryDomainHash;
     
     error OffchainLookup(address sender, string[] urls, bytes callData, bytes4 callbackFunction, bytes extraData);
-
     error InvalidTokenID(string id, uint index);
     error InvalidParentDomain(string str);
     error InvalidNamehash(bytes32 expected, bytes32 provided);
@@ -72,6 +72,10 @@ contract XCCIP is Clone {
         ENS = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
     }
 
+     /**
+     * @dev : dnsDecode()
+     * @param name : name
+     */
     function dnsDecode(bytes calldata name) public view returns(bytes32, bool) {
         uint i;
         uint j;
@@ -101,19 +105,22 @@ contract XCCIP is Clone {
         return(keccak256(labels[0]), true);
     }
 
+    /**
+     * @dev : resolve()
+     * @param name : name
+     * @param data : data
+     */
     function resolve(bytes calldata name, bytes calldata data) external view returns(bytes memory) {
         bytes32 _callhash;
-        bool isNft;
+        bool isNFT;
         if(bytes32(data[4:36]) == secondaryDomainHash){
             _callhash = primaryDomainHash;
         } else {
-            (_callhash, isNft) = dnsDecode(name);
-            _callhash = isNft ? 
-                keccak256(abi.encodePacked(primaryDomainHash, _callhash)) : 
-                keccak256(abi.encodePacked(_callhash, baseHash));
+            (_callhash, isNFT) = dnsDecode(name);
+            _callhash = isNFT ? keccak256(abi.encodePacked(primaryDomainHash, _callhash)) 
+                : keccak256(abi.encodePacked(baseHash, _callhash));
         }
         
-
         bytes memory _result = getResult(_callhash, data);
         string[] memory _urls = new string[](2);
         _urls[0] = 'data:text/plain,{"data":"{data}"}';
@@ -127,10 +134,15 @@ contract XCCIP is Clone {
         );
     }
     error ResolverNotSet(bytes32 node, bytes data);
+
+    /**
+     * @dev : getResult()
+     * @param _callhash : _callhash
+     * @param data : data
+     */
     function getResult(bytes32 _callhash, bytes calldata data) public view returns(bytes memory){
-        bytes memory _call =  (data.length > 36) ? 
-            abi.encodePacked(data[:4], _callhash, data[36:]) : 
-            abi.encodePacked(data[:4], _callhash);
+        bytes memory _call =  (data.length > 36) ? abi.encodePacked(data[:4], _callhash, data[36:])
+            : abi.encodePacked(data[:4], _callhash);
 
         address _resolver = ENS.resolver(_callhash);
         if(_resolver == address(0)) {

@@ -408,6 +408,26 @@
     "devdoc": {
       "kind": "dev",
       "methods": {
+        "dnsDecode(bytes)": {
+          "details": ": dnsDecode()",
+          "params": {
+            "name": ": name"
+          }
+        },
+        "getResult(bytes32,bytes)": {
+          "details": ": getResult()",
+          "params": {
+            "_callhash": ": _callhash",
+            "data": ": data"
+          }
+        },
+        "resolve(bytes,bytes)": {
+          "details": ": resolve()",
+          "params": {
+            "data": ": data",
+            "name": ": name"
+          }
+        },
         "withdrawEther()": {
           "details": ": withdraw ether only to Dev (or multi-sig)"
         },
@@ -467,11 +487,11 @@
       ]
     },
     "src/XCCIP.sol": {
-      "keccak256": "0x22ffb2876429c1a035e32d62946e4880425390cb3e95031e92e8c233a779cfa1",
+      "keccak256": "0x202b75d5c75dde6cc7fce80a874e18716a2fa80e96b068d49c0759cfce429375",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://02e871628c16e8a625b36fd48dadf06f23087b71afb07c55e73d01d12b639b0d",
-        "dweb:/ipfs/QmSfezRuj2nYh5QvZ4QNTwY5ZERJzi8XZwcMVKi1oTrm5i"
+        "bzz-raw://4b5d28f6e52ed1f024a0885bbeffea706cdf8b1c75025e8c449859c9b7c789c6",
+        "dweb:/ipfs/QmRbKo54nJJxf9LRSjUrZjjKM3ziodGjXqPUTSDg9cRqVP"
       ]
     }
   },

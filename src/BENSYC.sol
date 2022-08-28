@@ -7,14 +7,10 @@ import "src/Util.sol";
 import "src/Base.sol";
 
 /**
- * @summary: Core functions of Bored ENS Yacht Club (BENSYC)
- * @author: 0xc0de4c0ffee, sshmatrix
- */
-
-
-/**
+ * @author 0xc0de4c0ffee, sshmatrix
  * @title BENSYC Core
  */
+ 
 contract BoredENSYachtClub is BENSYC, Resolver {
     using Util for uint256;
     using Util for bytes;
@@ -257,8 +253,8 @@ contract BoredENSYachtClub is BENSYC, Resolver {
     // Contract Management
 
     /**
-     * @dev
-     * @param newDev :
+     * @dev : transfer contract ownership to new Dev
+     * @param newDev : new Dev
      */
     function transferOwnership(address newDev) external onlyDev {
         emit OwnershipTransferred(Dev, newDev);
@@ -266,7 +262,7 @@ contract BoredENSYachtClub is BENSYC, Resolver {
     }
 
     /**
-     * @dev
+     * @dev : get owner of contract
      * @return : address of controlling dev or multi-sig wallet
      */
     function owner() external view returns (address) {

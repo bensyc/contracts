@@ -16,11 +16,6 @@
         "type": "error"
       },
       {
-        "inputs": [],
-        "name": "Disallowed",
-        "type": "error"
-      },
-      {
         "inputs": [
           {
             "internalType": "address",
@@ -147,31 +142,6 @@
             "type": "address"
           }
         ],
-        "name": "AddrChanged",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "internalType": "bytes32",
-            "name": "node",
-            "type": "bytes32"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "coinType",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "bytes",
-            "name": "newAddress",
-            "type": "bytes"
-          }
-        ],
         "name": "AddressChanged",
         "type": "event"
       },
@@ -223,6 +193,31 @@
           }
         ],
         "name": "ApprovalForAll",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "bytes32",
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "coinType",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "bytes",
+            "name": "newAddress",
+            "type": "bytes"
+          }
+        ],
+        "name": "CoinAddressChanged",
         "type": "event"
       },
       {
@@ -329,7 +324,7 @@
             "type": "string"
           }
         ],
-        "name": "TextChanged",
+        "name": "TextRecordChanged",
         "type": "event"
       },
       {
@@ -541,30 +536,6 @@
             "internalType": "address payable",
             "name": "",
             "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "node",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "coinType",
-            "type": "uint256"
-          }
-        ],
-        "name": "addr",
-        "outputs": [
-          {
-            "internalType": "bytes",
-            "name": "_addr",
-            "type": "bytes"
           }
         ],
         "stateMutability": "view",
@@ -930,35 +901,12 @@
             "type": "bytes32"
           },
           {
-            "internalType": "uint256",
-            "name": "coinType",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bytes",
-            "name": "_addr",
-            "type": "bytes"
-          }
-        ],
-        "name": "setAddr",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "node",
-            "type": "bytes32"
-          },
-          {
             "internalType": "address",
             "name": "_addr",
             "type": "address"
           }
         ],
-        "name": "setAddr",
+        "name": "setAddress",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -979,6 +927,29 @@
         "name": "setApprovalForAll",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "coinType",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "_addr",
+            "type": "bytes"
+          }
+        ],
+        "name": "setCoinAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -1290,6 +1261,7 @@
       }
     ],
     "devdoc": {
+      "author": "0xc0de4c0ffee, sshmatrix",
       "kind": "dev",
       "methods": {
         "ID2Namehash(uint256)": {
@@ -1302,18 +1274,12 @@
           }
         },
         "addr(bytes32)": {
-          "details": "@param node :",
-          "returns": {
-            "_0": ":"
-          }
-        },
-        "addr(bytes32,uint256)": {
-          "details": "@param node :",
+          "details": ": resolve subdomain to owner if no address is set",
           "params": {
-            "coinType": ":"
+            "node": ": sundomain"
           },
           "returns": {
-            "_addr": ":"
+            "_0": ": resolved address "
           }
         },
         "approve(address,uint256)": {
@@ -1332,6 +1298,12 @@
         "constructor": {
           "details": "Constructor"
         },
+        "contenthash(bytes32)": {
+          "details": ": return default contenhash if no contenthash set",
+          "params": {
+            "node": ": subdomain"
+          }
+        },
         "mint()": {
           "details": "mint() function for single sudomain "
         },
@@ -1342,13 +1314,19 @@
           }
         },
         "name(bytes32)": {
-          "details": "@param node :",
+          "details": ": get default name at mint",
+          "params": {
+            "node": ": subdomain"
+          },
           "returns": {
-            "_name": ":"
+            "_name": ": default name"
           }
         },
         "owner()": {
-          "details": "@return : address of controlling dev or multi-sig wallet"
+          "details": ": get owner of contract",
+          "returns": {
+            "_0": ": address of controlling dev or multi-sig wallet"
+          }
         },
         "ownerOf(uint256)": {
           "details": "EIP721: returns owner of token ID",
@@ -1386,16 +1364,11 @@
             "to": ": to address"
           }
         },
-        "setAddr(bytes32,address)": {
-          "details": "@param node :",
+        "setAddress(bytes32,address)": {
+          "details": ": change address of subdomain",
           "params": {
-            "_addr": ":"
-          }
-        },
-        "setAddr(bytes32,uint256,bytes)": {
-          "details": "@param node :",
-          "params": {
-            "coinType": ":"
+            "_addr": ": new address",
+            "node": ": subdomain"
           }
         },
         "setApprovalForAll(address,bool)": {
@@ -1405,10 +1378,18 @@
             "operator": ": operator address to be approved for all"
           }
         },
-        "setContenthash(bytes32,bytes)": {
-          "details": "@param node:",
+        "setCoinAddress(bytes32,uint256,bytes)": {
+          "details": ": change address of subdomain for <coin>",
           "params": {
-            "_hash": ":"
+            "coinType": ": <coin>",
+            "node": ": subdomain"
+          }
+        },
+        "setContenthash(bytes32,bytes)": {
+          "details": ": change contenthash of subdomain",
+          "params": {
+            "_hash": ": new contenthash",
+            "node": ": subdomain"
           }
         },
         "setContractURI(string)": {
@@ -1418,9 +1399,9 @@
           }
         },
         "setDefaultContenthash(bytes)": {
-          "details": ":",
+          "details": ": sets default contenthash",
           "params": {
-            "_content": ": Default contenthash to set"
+            "_content": ": default contenthash to set"
           }
         },
         "setDefaultResolver(address)": {
@@ -1437,16 +1418,18 @@
           }
         },
         "setName(bytes32,string)": {
-          "details": "@param node :",
+          "details": ": change name record",
           "params": {
-            "_name": ":"
+            "_name": ": new name",
+            "node": ": subdomain"
           }
         },
         "setPubkey(bytes32,bytes32,bytes32)": {
-          "details": "@param node :",
+          "details": ": change public key record",
           "params": {
-            "x": ":",
-            "y": ":"
+            "node": ": subdomain",
+            "x": ": x-coordinate on elliptic curve",
+            "y": ": y-coordinate on elliptic curve"
           }
         },
         "setRoyalty(uint256)": {
@@ -1456,19 +1439,21 @@
           }
         },
         "setText(bytes32,string,string)": {
-          "details": "@param node :",
+          "details": ": change text record",
           "params": {
-            "key": ":",
-            "value": ":"
+            "key": ": key to change",
+            "node": ": subdomain",
+            "value": ": value to set"
           }
         },
         "text(bytes32,string)": {
-          "details": "@param node :",
+          "details": ": get text records",
           "params": {
-            "key": ":"
+            "key": ": key to query",
+            "node": ": subdomain"
           },
           "returns": {
-            "value": ":"
+            "value": ": value"
           }
         },
         "toggleActive()": {
@@ -1492,7 +1477,10 @@
           }
         },
         "transferOwnership(address)": {
-          "details": "@param newDev :"
+          "details": ": transfer contract ownership to new Dev",
+          "params": {
+            "newDev": ": new Dev"
+          }
         },
         "withdrawEther()": {
           "details": ": withdraw ether only to Dev (or multi-sig)"
@@ -1538,19 +1526,19 @@
   },
   "sources": {
     "src/BENSYC.sol": {
-      "keccak256": "0xb55378fc0b13c527e8be05b824dccf374acf8d9a2adfd1b63549716220fc7246",
+      "keccak256": "0x159285fbcd69f1e15de1f1dfa62143aca0f38ca0a086cb5f2fda5f4225c263d9",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://71636fc578832fa9e76d344884c8b65e744cc906ce1d5a9b1fabd28dc8b7835a",
-        "dweb:/ipfs/Qmb9jy3zu39vSzZs4rtSUj2sXGEPp4RjsJMEfoBrXa8mza"
+        "bzz-raw://a55daeb26819b564982273738dc483a42049da5789b315ae1e43cbf9d045322c",
+        "dweb:/ipfs/QmWd9FZQA7PcCxM2WyncRhQwf57rFTJDWbg56bseU6fCjL"
       ]
     },
     "src/Base.sol": {
-      "keccak256": "0xe64bab1fa39c76a5806024e966b8a8709523350d3c39af65df7846159e9a8ac4",
+      "keccak256": "0xc943119e983c32ee1556abd8908b278366aa1ac29abcab09cdc109c5d93796f6",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://e558e878841c5fb6919240737d23eb9ee13dd672529586e1002dcf414969c61b",
-        "dweb:/ipfs/QmWcRBSoVzNLd7Tm21xtVdqse4exHPshc7uADFFebAmRir"
+        "bzz-raw://5eb026b9275b0572f9dc29726a4a165f1a4802c43a43d867dd746e166362f93a",
+        "dweb:/ipfs/QmUT5njV7FLBDBzdM19hinN5GDTnuaTVQYDZxp2mVcUc8G"
       ]
     },
     "src/Interface.sol": {
@@ -1562,11 +1550,11 @@
       ]
     },
     "src/Resolver.sol": {
-      "keccak256": "0x1cef68d069350fc67b9a9b8f64c5139a476b01711e49574c6ccf48799aa6abfa",
+      "keccak256": "0x360e3d75213ea884d1dcb9c67c3f8d2482522b8ab0149fe94dc89308866f726f",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://9d19b0eca4851554ff5a3027f58ce11021e7ecddc45533104d64320949aeca8b",
-        "dweb:/ipfs/QmeJ3KVF6gC95qnhH3G48yXf6V8kxNWGcbiGJh4KMJYjGb"
+        "bzz-raw://77bc187c6c41187a1edb362fbadf13cb8376509e6b2f8eb5f754ea2ee7d5bcfe",
+        "dweb:/ipfs/QmeidZVXKweso5Pa9BHuRedgYU4e2xBsH79pydYC9uUXu7"
       ]
     },
     "src/Util.sol": {

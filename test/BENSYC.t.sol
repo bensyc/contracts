@@ -9,17 +9,13 @@ import "src/XCCIP.sol";
 
 import "test/GenAddr.sol";
 
-// @dev : for testing
 contract CannotReceive721 {
     address _a = address(0xc0de4c0cac01a);
 }
-
-// @dev : Tester
 contract BENSYCTest is Test {
     using stdStorage for StdStorage;
     using GenAddr for address;
-
-    function environment() public {
+    function setUp() public {
         address _addr = ENS.owner(_bensyc.DomainHash());
         require(_addr != address(0), "Cannot have 0 address");
         vm.prank(_addr);
@@ -38,24 +34,20 @@ contract BENSYCTest is Test {
         mintPrice = _bensyc.mintPrice();
     }
 
-    /// @dev : verify name & symbol
-    function checkNameSymbol() public {
+    function testCheckNameSymbol() public {
         assertEq(_bensyc.name(), "BoredENSYachtClub.eth");
         assertEq(_bensyc.symbol(), "BENSYC");
     }
 
-    /// @dev : verify zero supply at start
-    function checkZeroSupply() public {
+    function testZeroSupply() public {
         assertEq(_bensyc.totalSupply(), 0);
     }
 
-    /// @dev : check if parent 'boredensyachtclub.eth' is owned by the contract
-    function checkApprovedForAll() public {
+    function testCheckSetApproval() public {
         address _addr = ENS.owner(_bensyc.DomainHash());
         assertTrue(ENS.isApprovedForAll(_addr, address(_bensyc)));
     }
 
-    /// @dev : test minting one subdomain, verify ownership & resolver
     function testSubdomainMint() public {
         _bensyc.mint {
             value: mintPrice
@@ -66,7 +58,6 @@ contract BENSYCTest is Test {
         assertEq(ENS.resolver(_bensyc.ID2Namehash(0)), address(_bensyc.DefaultResolver()));
     }
 
-    /// @dev : test minting out the entire supply
     function testMintAll() public {
         uint maxSupply = 100;
         for (uint i = 0; i < maxSupply; i++) {
@@ -79,7 +70,6 @@ contract BENSYCTest is Test {
         }
     }
 
-    /// @dev : test batchMint() with batchSize < 13
     function testBatchMint() public {
         uint batchSize = 8;
         _bensyc.batchMint {
@@ -92,7 +82,6 @@ contract BENSYCTest is Test {
         }
     }
 
-    /// @dev : verify that batchMint() fails when batchSize > 12
     function testCannotMintOversizedBatch() public {
         uint batchSize = 13;
         vm.expectRevert(abi.encodeWithSelector(BENSYC.OversizedBatch.selector));
@@ -101,7 +90,6 @@ contract BENSYCTest is Test {
         }(batchSize);
     }
 
-    /// @dev : verify that minter/owner can transfer subdomain
     function testSubdomainTransfer() public {
         _bensyc.mint {
             value: mintPrice
@@ -112,7 +100,6 @@ contract BENSYCTest is Test {
         assertEq(_addr, address(0xc0de4c0cac01a));
     }
 
-    /// @dev : verify that contract cannot transfer a subdomain
     function testContractCannotTransfer() public {
         _bensyc.mint {
             value: mintPrice
@@ -121,7 +108,6 @@ contract BENSYCTest is Test {
         _bensyc.transferFrom(address(0xc0de4c0cac01a), address(0xc0de4c0cac01a), 0);
     }
 
-    /// @dev : verify that contract cannot receive a subdomain
     function testContractCannotReceive() public {
         _bensyc.mint {
             value: mintPrice
@@ -132,7 +118,6 @@ contract BENSYCTest is Test {
     }
 
     address notPure;
-    // @dev : generic onERC721Received tester
     function onERC721Received(address _operator, address _from, uint _tokenId, bytes memory _data) external returns(bytes4) {
         notPure = _operator;
         _from;
