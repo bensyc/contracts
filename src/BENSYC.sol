@@ -101,10 +101,7 @@ contract BoredENSYachtClub is BENSYC, Resolver {
         if (!active)
             revert ContractPaused();
 
-        if (totalSupply > maxSupply)
-            revert MintEnded();
-
-        if (batchSize > 12) // maximum batchSize = 12
+        if (batchSize > 12  || totalSupply + batchSize > maxSupply) // maximum batchSize = floor of [12, maxSupply - totalSupply]
             revert OversizedBatch();
 
         if (msg.value < mintPrice * batchSize)
@@ -112,8 +109,6 @@ contract BoredENSYachtClub is BENSYC, Resolver {
 
         uint256 _id = totalSupply;
         uint256 _mint = _id + batchSize;
-        if (_mint > maxSupply)
-            revert MintEnded();
         bytes32 _labelhash;
         while (_id < _mint) {
             _labelhash = keccak256(abi.encodePacked(_id.toString()));
@@ -221,8 +216,8 @@ contract BoredENSYachtClub is BENSYC, Resolver {
     }
 
     /**
-     * @dev : sets approval for all tokens
-     * @param operator : operator address to be approved for all
+     * @dev : sets Controller (for all tokens)
+     * @param operator : operator address to be set as Controller
      * @param approved : bool to set
      */
     function setApprovalForAll(address operator, bool approved) external payable {

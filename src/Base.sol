@@ -35,7 +35,7 @@ abstract contract BENSYC {
     string internal _name = "BoredENSYachtClub.eth";
     string public symbol = "BENSYC";
 
-    /// @dev : Default resolver used by this contract: NEEDS TO BE SET FOR MAINNET !!!
+    /// @dev : Default resolver used by this contract
     address public DefaultResolver;
 
     /// @dev : Current/Live supply of subdomains
