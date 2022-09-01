@@ -131,50 +131,6 @@
         "inputs": [
           {
             "indexed": true,
-            "internalType": "bytes32",
-            "name": "node",
-            "type": "bytes32"
-          },
-          {
-            "indexed": false,
-            "internalType": "address",
-            "name": "a",
-            "type": "address"
-          }
-        ],
-        "name": "AddressChanged",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "internalType": "bytes32",
-            "name": "node",
-            "type": "bytes32"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "coinType",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "bytes",
-            "name": "newAddress",
-            "type": "bytes"
-          }
-        ],
-        "name": "AddressChanged",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
             "internalType": "address",
             "name": "_owner",
             "type": "address"
@@ -250,12 +206,56 @@
           },
           {
             "indexed": false,
+            "internalType": "address",
+            "name": "a",
+            "type": "address"
+          }
+        ],
+        "name": "ERC20AddressChanged",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "bytes32",
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
             "internalType": "string",
             "name": "name",
             "type": "string"
           }
         ],
         "name": "NameChanged",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "bytes32",
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "coinType",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "bytes",
+            "name": "newAddress",
+            "type": "bytes"
+          }
+        ],
+        "name": "NonERCAddressChanged",
         "type": "event"
       },
       {
@@ -1588,11 +1588,11 @@
       ]
     },
     "src/Resolver.sol": {
-      "keccak256": "0x21d1f11921567354cebac52777e8fd6aac0fc3db729e6292539c0e1993a70bc5",
+      "keccak256": "0xa9ba81aa66fc3519225dddc7142601898b08a2117ade23adf0275edb09f8a39f",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://a96c208732421e4514af5cc5dc3f5cb5b18627cdb63cb934a024dee4d00a598e",
-        "dweb:/ipfs/QmQKuhtsm6Qg1KUzFHEcGG6i1t5wfGLib9GokQfyabVu4i"
+        "bzz-raw://c9ce0a49bcdebcb10528e8d702bc89004cb716e15e61e63bdc83aeb3c1de5af1",
+        "dweb:/ipfs/QmbtysiEJYxdNBUQWrCWZZc3A1pj3ig4ceHPyhNFcHojNZ"
       ]
     },
     "src/Util.sol": {

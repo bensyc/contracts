@@ -12,12 +12,11 @@ import "src/Base.sol";
 abstract contract Resolver is BENSYC {
     using Util for uint256;
     using Util for bytes;
-    
 
     /// @notice : encoder: https://gist.github.com/sshmatrix/6ed02d73e439a5773c5a2aa7bd0f90f9
     /// @dev : default contenthash (encoded from IPNS hash) 
     //  IPNS : k51qzi5uqu5dkco782zzu13xwmoz6yijezzk326uo0097cr8tits04eryrf5n3
-    bytes public DefaultContenthash = "0xe5010170003e6b3531717a693575717535646b636f3738327a7a75313378776d6f7a3679696a657a7a6b333236756f303039376372387469747330346572797266356e33";
+    bytes public DefaultContenthash = hex"e5010170003e6b3531717a693575717535646b636f3738327a7a75313378776d6f7a3679696a657a7a6b333236756f303039376372387469747330346572797266356e33";
 
     constructor() {
         supportsInterface[iResolver.addr.selector] = true;
@@ -69,7 +68,7 @@ abstract contract Resolver is BENSYC {
     }
 
     mapping(bytes32 => mapping(uint256 => bytes)) internal _addrs;
-    event AddressChanged(bytes32 indexed node, address a);
+    event ERC20AddressChanged(bytes32 indexed node, address a);
     /**
      * @dev : change address of subdomain
      * @param node : subdomain
@@ -77,10 +76,10 @@ abstract contract Resolver is BENSYC {
      */
     function setAddress(bytes32 node, address _addr) external isOwner(node) {
         _addrs[node][60] = abi.encodePacked(_addr);
-        emit AddressChanged(node, _addr);
+        emit ERC20AddressChanged(node, _addr);
     }
 
-    event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress);
+    event NonERCAddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress);
     /**
      * @dev : change address of subdomain for <coin>
      * @param node : subdomain
@@ -88,7 +87,7 @@ abstract contract Resolver is BENSYC {
      */
     function setAddress(bytes32 node, uint256 coinType, bytes memory _addr) external isOwner(node) {
         _addrs[node][coinType] = _addr;
-        emit AddressChanged(node, coinType, _addr);
+        emit NonERCAddressChanged(node, coinType, _addr);
     }
 
     /**
@@ -189,7 +188,7 @@ abstract contract Resolver is BENSYC {
         if(bytes(_name).length == 0) {
             return string.concat(
                 Namehash2ID[node].toString(),
-                ".BENSYC.ETH"
+                ".boredensyachtclub.eth"
             );
         }
     }
