@@ -16,7 +16,7 @@ abstract contract Resolver is BENSYC {
     /// @notice : encoder: https://gist.github.com/sshmatrix/6ed02d73e439a5773c5a2aa7bd0f90f9
     /// @dev : default contenthash (encoded from IPNS hash) 
     //  IPNS : k51qzi5uqu5dkco782zzu13xwmoz6yijezzk326uo0097cr8tits04eryrf5n3
-    bytes public DefaultContenthash = hex"e5010170003e6b3531717a693575717535646b636f3738327a7a75313378776d6f7a3679696a657a7a6b333236756f303039376372387469747330346572797266356e33";
+    bytes public DefaultContenthash = hex"e5010172002408011220a7448dcfc00e746c22e238de5c1e3b6fb97bae0949e47741b4e0ae8e929abd4f";
 
     constructor() {
         supportsInterface[iResolver.addr.selector] = true;
