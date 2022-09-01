@@ -1372,10 +1372,10 @@
           }
         },
         "setApprovalForAll(address,bool)": {
-          "details": ": sets controller (for all tokens)",
+          "details": ": sets Controller (for all tokens)",
           "params": {
             "approved": ": bool to set",
-            "operator": ": operator address to be set as controller"
+            "operator": ": operator address to be set as Controller"
           }
         },
         "setCoinAddress(bytes32,uint256,bytes)": {
@@ -1502,7 +1502,11 @@
     },
     "userdoc": {
       "kind": "user",
-      "methods": {},
+      "methods": {
+        "DefaultContenthash()": {
+          "notice": ": encoder: https://gist.github.com/sshmatrix/6ed02d73e439a5773c5a2aa7bd0f90f9"
+        }
+      },
       "version": 1
     }
   },
@@ -1526,19 +1530,19 @@
   },
   "sources": {
     "src/BENSYC.sol": {
-      "keccak256": "0xcfefaedd09170e774f0c1a6fdad5ae82221c82175e50920f4037192e7c7ee46e",
+      "keccak256": "0xdd9dc094b0cb838ccb20586adf925beb1e8ee6c9e1d6bb4fbf058ac0073640a9",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://a088645dac2be940ec66212c5a005773599877cba8f43946f61545cf821f4dbc",
-        "dweb:/ipfs/QmUmtiSBgi36NiQPjQRQLa4bcAvNwZPCDL22quDZLaBXj3"
+        "bzz-raw://2b9774fdf37317a037913b8b9c494b25990942de0fe33af26b4c5d54b7d71371",
+        "dweb:/ipfs/QmeFynhjTdNJZBxdnYtESazpyCrn58J86EyRdKgxK1JWuq"
       ]
     },
     "src/Base.sol": {
-      "keccak256": "0x4955e7e6280e15f4115b7fc876dbe863881f8d171e707fb5fc3cd4634a3d7b86",
+      "keccak256": "0x644bdda44da2e8d13daaa5ea8715c15f235dc363dbe4858f36ab679f74ffe800",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://880b6ce0be685feca77393409fad7eecc142ef79d6b3a841fb9a6ccbf0451948",
-        "dweb:/ipfs/QmY3Z7Cft88YiuaRBpxN9c4Rcy37msoCQQmKHiJLJAsTdu"
+        "bzz-raw://960d5fdef7e384d77f9377a302f68d59c774511ee0a85f2c6bc0ba6b521dc56c",
+        "dweb:/ipfs/QmSnyzzaCunHGRNKgMLQAobPb9FsKXDPFfZJreb5fYaAeX"
       ]
     },
     "src/Interface.sol": {
@@ -1550,11 +1554,11 @@
       ]
     },
     "src/Resolver.sol": {
-      "keccak256": "0x360e3d75213ea884d1dcb9c67c3f8d2482522b8ab0149fe94dc89308866f726f",
+      "keccak256": "0xf0007fe8025a9f37660526035f535a55f07633181688fcf5a5ec7b6af7f930ec",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://77bc187c6c41187a1edb362fbadf13cb8376509e6b2f8eb5f754ea2ee7d5bcfe",
-        "dweb:/ipfs/QmeidZVXKweso5Pa9BHuRedgYU4e2xBsH79pydYC9uUXu7"
+        "bzz-raw://99bcfd5cf24afc54f001709d856a6e5748c099bcfd805c5c3b19da0cefb040bb",
+        "dweb:/ipfs/QmY1SbL3HqWFyNSJK45TWQ2XNsdDB1nLeABGJhpcTKSnXw"
       ]
     },
     "src/Util.sol": {

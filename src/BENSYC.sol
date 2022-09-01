@@ -16,7 +16,7 @@ contract BoredENSYachtClub is BENSYC, Resolver {
     using Util for bytes;
 
     // @dev : maximum supply of subdomains
-    uint256 public immutable maxSupply = 100;
+    uint256 public immutable maxSupply = 10000;
 
     /// @dev : namehash of 'boredensyachtclub.eth'
     bytes32 public immutable DomainHash;

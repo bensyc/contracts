@@ -30,7 +30,6 @@ abstract contract BENSYC {
         _;
     }
 
-
     // ERC721 details
     string internal _name = "BoredENSYachtClub.eth";
     string public symbol = "BENSYC";
@@ -45,13 +44,13 @@ abstract contract BENSYC {
     uint256 public mintPrice = 0.01 ether;
 
     /// @dev : Opensea Contract URI
-    string public contractURI = "ipfs://QmVYtPt9LG2wjzAsosKt5c5182tmqwVfc3vNJ1thpNQJR9"; // opensea contract uri hash
+    string public contractURI = "ipfs://QmceyxoNqfPv1LNfYnmgxasXr8m8ghC3TbYuFbbqhH8pfV";
 
     /// @dev : ERC2981 Royalty info; 5 = 5%
     uint256 public royalty = 5;
     
     /// @dev : IPFS hash of metadata directory
-    string public metaIPFS = "Qmeeseyvfcx3Ur65y7awVRywwAvBRBDSdsX2GKgyUxgnJP";
+    string public metaIPFS = "QmYgWXKADuSgWziNgmpYa4PAmhFL3W7aGLR5C1dkRuNGfM";
 
 
     mapping(address => uint256) public balanceOf;

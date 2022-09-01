@@ -10,7 +10,7 @@ contract BENSYCScript is Script {
 
     using GenAddr for address;
 
-    function deploy() external {
+    function run() external {
         vm.startBroadcast();
         
         /// @dev : Generate contract address before deployment

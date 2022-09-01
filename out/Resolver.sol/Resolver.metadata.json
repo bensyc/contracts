@@ -1032,12 +1032,21 @@
           }
         }
       },
+      "stateVariables": {
+        "DefaultContenthash": {
+          "details": ": default contenthash (encoded from IPNS hash) "
+        }
+      },
       "title": "BENSYC Resolver",
       "version": 1
     },
     "userdoc": {
       "kind": "user",
-      "methods": {},
+      "methods": {
+        "DefaultContenthash()": {
+          "notice": ": encoder: https://gist.github.com/sshmatrix/6ed02d73e439a5773c5a2aa7bd0f90f9"
+        }
+      },
       "version": 1
     }
   },
@@ -1061,11 +1070,11 @@
   },
   "sources": {
     "src/Base.sol": {
-      "keccak256": "0x4955e7e6280e15f4115b7fc876dbe863881f8d171e707fb5fc3cd4634a3d7b86",
+      "keccak256": "0x644bdda44da2e8d13daaa5ea8715c15f235dc363dbe4858f36ab679f74ffe800",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://880b6ce0be685feca77393409fad7eecc142ef79d6b3a841fb9a6ccbf0451948",
-        "dweb:/ipfs/QmY3Z7Cft88YiuaRBpxN9c4Rcy37msoCQQmKHiJLJAsTdu"
+        "bzz-raw://960d5fdef7e384d77f9377a302f68d59c774511ee0a85f2c6bc0ba6b521dc56c",
+        "dweb:/ipfs/QmSnyzzaCunHGRNKgMLQAobPb9FsKXDPFfZJreb5fYaAeX"
       ]
     },
     "src/Interface.sol": {
@@ -1077,11 +1086,11 @@
       ]
     },
     "src/Resolver.sol": {
-      "keccak256": "0x360e3d75213ea884d1dcb9c67c3f8d2482522b8ab0149fe94dc89308866f726f",
+      "keccak256": "0xf0007fe8025a9f37660526035f535a55f07633181688fcf5a5ec7b6af7f930ec",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://77bc187c6c41187a1edb362fbadf13cb8376509e6b2f8eb5f754ea2ee7d5bcfe",
-        "dweb:/ipfs/QmeidZVXKweso5Pa9BHuRedgYU4e2xBsH79pydYC9uUXu7"
+        "bzz-raw://99bcfd5cf24afc54f001709d856a6e5748c099bcfd805c5c3b19da0cefb040bb",
+        "dweb:/ipfs/QmY1SbL3HqWFyNSJK45TWQ2XNsdDB1nLeABGJhpcTKSnXw"
       ]
     },
     "src/Util.sol": {
