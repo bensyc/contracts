@@ -55,7 +55,6 @@ abstract contract Resolver is BENSYC {
         if (_hash.length == 0) {
             return DefaultContenthash;
         }
-        return _hash;
     }
 
     event ContenthashChanged(bytes32 indexed node, bytes _contenthash);

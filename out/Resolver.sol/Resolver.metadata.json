@@ -1120,11 +1120,11 @@
       ]
     },
     "src/Resolver.sol": {
-      "keccak256": "0x329ae7c0a1bd3ab2b9474e142e596356087da8817b67fa4419205d535f2f95f9",
+      "keccak256": "0x21d1f11921567354cebac52777e8fd6aac0fc3db729e6292539c0e1993a70bc5",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://3c88b66b164afacdde909326337dfa44a6fdb71ccc86ea1fe298fca2e9925e76",
-        "dweb:/ipfs/QmZ4FrxfqoVYPKcmsMGSb7gVPyWsSkuhCBhwHJwhRbtzjd"
+        "bzz-raw://a96c208732421e4514af5cc5dc3f5cb5b18627cdb63cb934a024dee4d00a598e",
+        "dweb:/ipfs/QmQKuhtsm6Qg1KUzFHEcGG6i1t5wfGLib9GokQfyabVu4i"
       ]
     },
     "src/Util.sol": {
