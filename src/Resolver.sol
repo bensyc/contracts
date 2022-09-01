@@ -55,6 +55,7 @@ abstract contract Resolver is BENSYC {
         if (_hash.length == 0) {
             return DefaultContenthash;
         }
+        return _hash;
     }
 
     event ContenthashChanged(bytes32 indexed node, bytes _contenthash);
@@ -80,19 +81,19 @@ abstract contract Resolver is BENSYC {
         emit AddressChanged(node, _addr);
     }
 
-    event CoinAddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress);
+    event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress);
     /**
      * @dev : change address of subdomain for <coin>
      * @param node : subdomain
      * @param coinType : <coin>
      */
-    function setCoinAddress(bytes32 node, uint256 coinType, bytes memory _addr) external isOwner(node) {
+    function setAddress(bytes32 node, uint256 coinType, bytes memory _addr) external isOwner(node) {
         _addrs[node][coinType] = _addr;
-        emit CoinAddressChanged(node, coinType, _addr);
+        emit AddressChanged(node, coinType, _addr);
     }
 
     /**
-     * @dev : resolve subdomain to owner if no address is set
+     * @dev : default subdomain to owner if no address is set for Ethereum [60]
      * @param node : sundomain
      * @return : resolved address 
      */
@@ -102,6 +103,19 @@ abstract contract Resolver is BENSYC {
             return payable(ENS.owner(node));
         }
         return payable(address(uint160(uint256(bytes32(_addr)))));
+    }
+
+     /**
+     * @dev : resolve subdomain addresses for <coin>; if no ethereum address [60] is set, resolve to owner
+     * @param node : sundomain
+     * @param coinType : <coin>
+     * @return _addr : resolved address 
+     */
+    function addr(bytes32 node, uint256 coinType) external view returns(bytes memory _addr) {
+        _addr = _addrs[node][coinType];
+        if (_addr.length == 0 && coinType == 60) {
+            _addr = abi.encodePacked(_ownerOf[Namehash2ID[node]]);
+        }
     }
 
     struct PublicKey {

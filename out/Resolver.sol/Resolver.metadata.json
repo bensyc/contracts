@@ -145,6 +145,31 @@
         "inputs": [
           {
             "indexed": true,
+            "internalType": "bytes32",
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "coinType",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "bytes",
+            "name": "newAddress",
+            "type": "bytes"
+          }
+        ],
+        "name": "AddressChanged",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
             "internalType": "address",
             "name": "_owner",
             "type": "address"
@@ -188,31 +213,6 @@
           }
         ],
         "name": "ApprovalForAll",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "internalType": "bytes32",
-            "name": "node",
-            "type": "bytes32"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "coinType",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "bytes",
-            "name": "newAddress",
-            "type": "bytes"
-          }
-        ],
-        "name": "CoinAddressChanged",
         "type": "event"
       },
       {
@@ -507,6 +507,30 @@
       {
         "inputs": [
           {
+            "internalType": "bytes32",
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "coinType",
+            "type": "uint256"
+          }
+        ],
+        "name": "addr",
+        "outputs": [
+          {
+            "internalType": "bytes",
+            "name": "_addr",
+            "type": "bytes"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "address",
             "name": "",
             "type": "address"
@@ -688,9 +712,14 @@
             "type": "bytes32"
           },
           {
-            "internalType": "address",
+            "internalType": "uint256",
+            "name": "coinType",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
             "name": "_addr",
-            "type": "address"
+            "type": "bytes"
           }
         ],
         "name": "setAddress",
@@ -706,17 +735,12 @@
             "type": "bytes32"
           },
           {
-            "internalType": "uint256",
-            "name": "coinType",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bytes",
+            "internalType": "address",
             "name": "_addr",
-            "type": "bytes"
+            "type": "address"
           }
         ],
-        "name": "setCoinAddress",
+        "name": "setAddress",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -932,12 +956,22 @@
       "kind": "dev",
       "methods": {
         "addr(bytes32)": {
-          "details": ": resolve subdomain to owner if no address is set",
+          "details": ": default subdomain to owner if no address is set for Ethereum [60]",
           "params": {
             "node": ": sundomain"
           },
           "returns": {
             "_0": ": resolved address "
+          }
+        },
+        "addr(bytes32,uint256)": {
+          "details": ": resolve subdomain addresses for <coin>; if no ethereum address [60] is set, resolve to owner",
+          "params": {
+            "coinType": ": <coin>",
+            "node": ": sundomain"
+          },
+          "returns": {
+            "_addr": ": resolved address "
           }
         },
         "contenthash(bytes32)": {
@@ -962,7 +996,7 @@
             "node": ": subdomain"
           }
         },
-        "setCoinAddress(bytes32,uint256,bytes)": {
+        "setAddress(bytes32,uint256,bytes)": {
           "details": ": change address of subdomain for <coin>",
           "params": {
             "coinType": ": <coin>",
@@ -1086,11 +1120,11 @@
       ]
     },
     "src/Resolver.sol": {
-      "keccak256": "0xf0007fe8025a9f37660526035f535a55f07633181688fcf5a5ec7b6af7f930ec",
+      "keccak256": "0x329ae7c0a1bd3ab2b9474e142e596356087da8817b67fa4419205d535f2f95f9",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://99bcfd5cf24afc54f001709d856a6e5748c099bcfd805c5c3b19da0cefb040bb",
-        "dweb:/ipfs/QmY1SbL3HqWFyNSJK45TWQ2XNsdDB1nLeABGJhpcTKSnXw"
+        "bzz-raw://3c88b66b164afacdde909326337dfa44a6fdb71ccc86ea1fe298fca2e9925e76",
+        "dweb:/ipfs/QmZ4FrxfqoVYPKcmsMGSb7gVPyWsSkuhCBhwHJwhRbtzjd"
       ]
     },
     "src/Util.sol": {
