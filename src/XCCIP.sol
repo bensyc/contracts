@@ -47,26 +47,27 @@ abstract contract Clone {
 
 contract XCCIP is Clone {
 
-    address public PrimaryResolver;
-    bytes32 public immutable secondaryLabelHash = keccak256(bytes("bensyc"));
-    bytes32 public immutable secondaryDomainHash;
-    bytes32 public immutable baseHash;
-    bytes32 public immutable primaryDomainHash;
+    bytes32 public immutable secondaryDomainHash; // ENS namehash of "bensyc.eth"
+    bytes32 public immutable baseHash; // ens namehash of ".eth"
+    bytes32 public immutable primaryDomainHash; // ENS namehash of "boredensyachtclub.eth"
     
+    /// @dev : CCIP https://eips.ethereum.org/EIPS/eip-3668
     error OffchainLookup(address sender, string[] urls, bytes callData, bytes4 callbackFunction, bytes extraData);
+
     error InvalidTokenID(string id, uint index);
     error InvalidParentDomain(string str);
     error InvalidNamehash(bytes32 expected, bytes32 provided);
     error RequestError(bytes32 expected, bytes32 check, bytes data, uint blknum, bytes result);
     error StaticCallFailed(address resolver, bytes _call, bytes _error);
-    
+    error ResolverNotSet(bytes32 node, bytes data);
+
     function supportsInterface(bytes4 sig) external pure returns(bool){
         return (sig == XCCIP.resolve.selector || sig == XCCIP.supportsInterface.selector);
     }
     
     constructor(address _bensyc) {
         baseHash = keccak256(abi.encodePacked(bytes32(0), keccak256("eth")));
-        secondaryDomainHash = keccak256(abi.encodePacked(baseHash, secondaryLabelHash));
+        secondaryDomainHash = keccak256(abi.encodePacked(baseHash, keccak256(bytes("bensyc"))));
         primaryDomainHash = keccak256(abi.encodePacked(baseHash,  keccak256(bytes("boredensyachtclub"))));
         BENSYC = iBENSYC(_bensyc);
         ENS = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
@@ -133,7 +134,6 @@ contract XCCIP is Clone {
             abi.encode(keccak256(abi.encodePacked(msg.sender, address(this), data, block.number, _result)), block.number, data)
         );
     }
-    error ResolverNotSet(bytes32 node, bytes data);
 
     /**
      * @dev : getResult()
@@ -141,15 +141,16 @@ contract XCCIP is Clone {
      * @param data : data
      */
     function getResult(bytes32 _callhash, bytes calldata data) public view returns(bytes memory){
-        bytes memory _call =  (data.length > 36) ? abi.encodePacked(data[:4], _callhash, data[36:])
-            : abi.encodePacked(data[:4], _callhash);
+        bytes memory _call =  (data.length > 36) ? 
+            abi.encodePacked(data[:4], _callhash, data[36:]) : 
+            abi.encodePacked(data[:4], _callhash);
 
         address _resolver = ENS.resolver(_callhash);
         if(_resolver == address(0)) {
             revert ResolverNotSet(_callhash, _call);
         }
-        (bool _success, bytes memory _result) = _resolver.staticcall(_call);  
-        if (!_success || _result.length == 0){
+        (bool ok, bytes memory _result) = _resolver.staticcall(_call);  
+        if (!ok){
             revert StaticCallFailed(_resolver, _call, _result);
         }
         return _result;

@@ -2,8 +2,7 @@
 pragma solidity >0.8.0 <0.9.0;
 
 // Utility functions
-library Util{
-        
+library Util {
     /**
      * @dev Convert uint value to string number
      * @param value : uint value to be converted
@@ -49,5 +48,4 @@ library Util{
         }
         return string(abi.encodePacked("0x", converted));
     }
-
 }

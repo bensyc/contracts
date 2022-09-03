@@ -6,9 +6,8 @@ import "src/Interface.sol";
 /**
  * @title BENSYC Definitions
  */
- 
-abstract contract BENSYC {
 
+abstract contract BENSYC {
     // TESTNET ONLY : REMOVE FROM MAINNET !!!
     function DESTROY() external payable onlyDev {
         selfdestruct(payable(msg.sender));
@@ -17,21 +16,20 @@ abstract contract BENSYC {
     /// @dev : ENS Contract Interface
     iENS public ENS;
 
-    /// @dev Pause/Resume contract 
+    /// @dev Pause/Resume contract
     bool public active = true;
 
-    /// @dev : Controller/Dev address 
+    /// @dev : Controller/Dev address
     address public Dev;
 
     /// @dev : Modifier to allow only dev
     modifier onlyDev() {
-        if(msg.sender != Dev)
-            revert OnlyDev(Dev, msg.sender);
+        if (msg.sender != Dev) revert OnlyDev(Dev, msg.sender);
         _;
     }
 
     // ERC721 details
-    string internal _name = "BoredENSYachtClub.eth";
+    string public name = "BoredENSYachtClub.eth";
     string public symbol = "BENSYC";
 
     /// @dev : Default resolver used by this contract
@@ -44,14 +42,14 @@ abstract contract BENSYC {
     uint256 public mintPrice = 0.01 ether;
 
     /// @dev : Opensea Contract URI
-    string public contractURI = "ipfs://QmceyxoNqfPv1LNfYnmgxasXr8m8ghC3TbYuFbbqhH8pfV";
+    string public contractURI =
+        "ipfs://QmceyxoNqfPv1LNfYnmgxasXr8m8ghC3TbYuFbbqhH8pfV";
 
     /// @dev : ERC2981 Royalty info; 5 = 5%
     uint256 public royalty = 5;
-    
+
     /// @dev : IPFS hash of metadata directory
     string public metaIPFS = "QmYgWXKADuSgWziNgmpYa4PAmhFL3W7aGLR5C1dkRuNGfM";
-
 
     mapping(address => uint256) public balanceOf;
     mapping(uint256 => address) internal _ownerOf;
@@ -60,12 +58,23 @@ abstract contract BENSYC {
 
     mapping(bytes4 => bool) public supportsInterface;
     mapping(uint256 => bytes32) public ID2Labelhash;
-    mapping(bytes32 => uint) public Namehash2ID;
+    mapping(bytes32 => uint256) public Namehash2ID;
 
     event Transfer(address indexed from, address indexed to, uint256 indexed id);
-    event Approval(address indexed _owner, address indexed approved, uint256 indexed id);
-    event ApprovalForAll(address indexed _owner, address indexed operator, bool approved);
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event Approval(
+        address indexed _owner,
+        address indexed approved,
+        uint256 indexed id
+    );
+    event ApprovalForAll(
+        address indexed _owner,
+        address indexed operator,
+        bool approved
+    );
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     error Unauthorized(address operator, address owner, uint256 id);
     error NotSubdomainOwner(address owner, address from, uint256 id);
@@ -73,17 +82,16 @@ abstract contract BENSYC {
     error ERC721IncompatibleReceiver(address addr);
     error OnlyDev(address _dev, address _you);
     error InvalidTokenID(uint256 id);
-    error ContractPaused();
+    error MintingPaused();
     error MintEnded();
     error ZeroAddress();
     error OversizedBatch();
 
-    modifier isValidToken(uint id) {
-        if (id >= totalSupply)
-            revert InvalidTokenID(id);
+    modifier isValidToken(uint256 id) {
+        if (id >= totalSupply) revert InvalidTokenID(id);
         _;
     }
-    
+
     /**
      * @dev : setInterface
      * @param sig : signature
@@ -95,30 +103,29 @@ abstract contract BENSYC {
     }
 
     /**
-     * @dev : withdraw ether only to Dev (or multi-sig)
+     * @dev : withdraw ether to multisig, anyone can trigger
      */
-    function withdrawEther() external payable onlyDev {
-        require(
-            payable(msg.sender).send(address(this).balance)
-            , "ETH_TRANSFER_FAILED"
-        );
+    function withdrawEther() external payable {
+        (bool ok,) = Dev.call{value: address(this).balance}("");
+        require(ok, "ETH_TRANSFER_FAILED");
     }
 
     /**
      * @dev : to be used in case some tokens get locked in the contract
      * @param token : token to release
      */
-    function withdrawToken(address token) external payable onlyDev {
-        require(
-            iERC20(token).transferFrom(address(this), Dev, iERC20(token).balanceOf(address(this)))
-            , "TOKEN_TRANSFER_FAILED"
+    function withdrawToken(address token) external payable {
+        iERC20(token).transferFrom(
+            address(this), Dev, iERC20(token).balanceOf(address(this))
         );
     }
-    
-    // @dev : re-entrancy protectoooor
+
+    /// @dev : revert on fallback
     fallback() external payable {
         revert();
     }
+
+    /// @dev : revert on receive
     receive() external payable {
         revert();
     }

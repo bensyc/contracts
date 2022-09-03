@@ -12,7 +12,17 @@ import "test/GenAddr.sol";
 contract CannotReceive721 {
     address _a = address(0xc0de4c0cac01a);
 }
-
+contract CanReceive721{
+        // @dev : generic onERC721Received tester
+    address notPure;
+    function onERC721Received(address _operator, address _from, uint _tokenId, bytes memory _data) external returns(bytes4) {
+        notPure = _operator;
+        _from;
+        _tokenId;
+        _data;
+        return CanReceive721.onERC721Received.selector;
+    }
+}
 // @dev : Tester
 contract BENSYCTest is Test {
     using stdStorage for StdStorage;
@@ -20,75 +30,87 @@ contract BENSYCTest is Test {
 
     /// @dev : set contract as controller for boredensyachtclub.eth
     function setUp() public {
-        address _addr = ENS.owner(_bensyc.DomainHash());
+        address _addr = ENS.owner(bensyc.DomainHash());
         require(_addr != address(0), "Revert: 0 address detected");
         vm.prank(_addr);
-        ENS.setApprovalForAll(address(_bensyc), true);
+        ENS.setApprovalForAll(address(bensyc), true);
     }
 
-    BoredENSYachtClub public _bensyc;
+    BoredENSYachtClub public bensyc;
  
-    XCCIP public _xccip;
+    //XCCIP public _xccip;
+    Resolver public resolver;
     uint public mintPrice;
     iENS public ENS = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
     CannotReceive721 public _notReceiver;
+    CanReceive721 public _isReceiver;
     constructor() {
-        _bensyc = new BoredENSYachtClub();
+        address deployer = address(this);
+        address bensycAddr = deployer.genAddr(vm.getNonce(deployer) + 1);
+        resolver = new Resolver(bensycAddr);
+        bensyc = new BoredENSYachtClub(address(resolver), 100);
+        require(address(bensyc) == bensycAddr, "CRITICAL: ADDRESSES NOT MATCHING");
+
         _notReceiver = new CannotReceive721();
-        mintPrice = _bensyc.mintPrice();
+        _isReceiver = new CanReceive721();
+        mintPrice = bensyc.mintPrice();
     }
 
     /// @dev : verify name & symbol
     function testCheckNameSymbol() public {
-        assertEq(_bensyc.name(), "BoredENSYachtClub.eth");
-        assertEq(_bensyc.symbol(), "BENSYC");
+        assertEq(bensyc.name(), "BoredENSYachtClub.eth");
+        assertEq(bensyc.symbol(), "BENSYC");
     }
 
     /// @dev : verify zero supply at start
     function testCheckZeroSupply() public {
-        assertEq(_bensyc.totalSupply(), 0);
+        assertEq(bensyc.totalSupply(), 0);
     }
 
     /// @dev : check if contract is authorised by boredensyachtclub.eth
     function testCheckContractIsController() public {
-        address _addr = ENS.owner(_bensyc.DomainHash());
-        assertTrue(ENS.isApprovedForAll(_addr, address(_bensyc)));
+        address _addr = ENS.owner(bensyc.DomainHash());
+        assertTrue(ENS.isApprovedForAll(_addr, address(bensyc)));
     }
 
     /// @dev : test minting one subdomain, verify ownership & resolver
     function testSubdomainMint() public {
-        _bensyc.mint {
+        bensyc.mint {
             value: mintPrice
         }();
-        assertEq(_bensyc.ownerOf(0), address(this));
-        assertEq(_bensyc.balanceOf(address(this)), 1);
-        assertEq(ENS.owner(_bensyc.ID2Namehash(0)), address(this));
-        assertEq(ENS.resolver(_bensyc.ID2Namehash(0)), address(_bensyc.DefaultResolver()));
+        assertEq(bensyc.ownerOf(0), address(this));
+        assertEq(bensyc.balanceOf(address(this)), 1);
+        assertEq(ENS.owner(bensyc.ID2Namehash(0)), address(this));
+        assertEq(ENS.resolver(bensyc.ID2Namehash(0)), address(bensyc.DefaultResolver()));
     }
 
     /// @dev : test minting out the entire supply one by one
     function testMintTokensIndividually() public {
         uint maxSupply = 100;
         for (uint i = 0; i < maxSupply; i++) {
-            _bensyc.mint {
-                value: 0.01 ether
+            bensyc.mint {
+                value: mintPrice
             }();
-            assertEq(_bensyc.ownerOf(i), address(this));
-            assertEq(ENS.owner(_bensyc.ID2Namehash(i)), address(this));
-            assertEq(ENS.resolver(_bensyc.ID2Namehash(i)), address(_bensyc.DefaultResolver()));
+            assertEq(bensyc.ownerOf(i), address(this));
+            assertEq(ENS.owner(bensyc.ID2Namehash(i)), address(this));
+            assertEq(ENS.resolver(bensyc.ID2Namehash(i)), address(bensyc.DefaultResolver()));
         }
+        assertEq(bensyc.totalSupply(), 100);
+        vm.expectRevert(abi.encodeWithSelector(BENSYC.InvalidTokenID.selector, uint(100)));
+        bensyc.ownerOf(100); // 
+        assertEq(bensyc.ownerOf(99), address(this)); // 
     }
 
     /// @dev : test minting a batch with size < 13
     function testBatchMint() public {
-        uint batchSize = 8;
-        _bensyc.batchMint {
-            value: batchSize * 0.01 ether
+        uint batchSize = 10;
+        bensyc.batchMint {
+            value: batchSize * mintPrice
         }(batchSize);
         for (uint i = 0; i < batchSize; i++) {
-            assertEq(_bensyc.ownerOf(i), address(this));
-            assertEq(ENS.owner(_bensyc.ID2Namehash(i)), address(this));
-            assertEq(ENS.resolver(_bensyc.ID2Namehash(i)), address(_bensyc.DefaultResolver()));
+            assertEq(bensyc.ownerOf(i), address(this));
+            assertEq(ENS.owner(bensyc.ID2Namehash(i)), address(this));
+            assertEq(ENS.resolver(bensyc.ID2Namehash(i)), address(bensyc.DefaultResolver()));
         }
     }
 
@@ -96,48 +118,45 @@ contract BENSYCTest is Test {
     function testCannotMintOversizedBatch() public {
         uint batchSize = 13;
         vm.expectRevert(abi.encodeWithSelector(BENSYC.OversizedBatch.selector));
-        _bensyc.batchMint {
-            value: batchSize * 0.01 ether
+        bensyc.batchMint {
+            value: batchSize * mintPrice
         }(batchSize);
     }
 
     /// @dev : verify that owner can transfer subdomain
     function testSubdomainTransfer() public {
-        _bensyc.mint {
+        bensyc.mint {
             value: mintPrice
         }();
-        address _addr = _bensyc.ownerOf(0);
-        _bensyc.transferFrom(_addr, address(0xc0de4c0cac01a), 0);
-        _addr = _bensyc.ownerOf(0);
+        address _addr = bensyc.ownerOf(0);
+        bensyc.transferFrom(_addr, address(0xc0de4c0cac01a), 0);
+        _addr = bensyc.ownerOf(0);
         assertEq(_addr, address(0xc0de4c0cac01a));
     }
 
     /// @dev : verify that contract (= parent controller) cannot transfer a subdomain
     function testContractCannotTransfer() public {
-        _bensyc.mint {
+        bensyc.mint {
             value: mintPrice
         }();
         vm.expectRevert(abi.encodeWithSelector(BENSYC.NotSubdomainOwner.selector, address(this), address(0xc0de4c0cac01a), 0));
-        _bensyc.transferFrom(address(0xc0de4c0cac01a), address(0xc0de4c0cac01a), 0);
+        bensyc.transferFrom(address(0xc0de4c0cac01a), address(0xc0de4c0cac01a), 0);
+    }
+
+    /// @dev : verify that contract (= parent controller) cannot transfer a subdomain
+    function testValidContractCanRecive() public {
+        bensyc.mint {
+            value: mintPrice
+        }();
+        bensyc.transferFrom(address(this), address(_isReceiver), 0);
     }
 
     /// @dev : verify that contract cannot receive a subdomain
     function testContractCannotReceive() public {
-        _bensyc.mint {
+        bensyc.mint {
             value: mintPrice
         }();
-        address _from = _bensyc.ownerOf(0);
         vm.expectRevert(abi.encodeWithSelector(BENSYC.ERC721IncompatibleReceiver.selector, address(_notReceiver)));
-        _bensyc.transferFrom(_from, address(_notReceiver), 0);
-    }
-
-    // @dev : generic onERC721Received tester
-    address notPure;
-    function onERC721Received(address _operator, address _from, uint _tokenId, bytes memory _data) external returns(bytes4) {
-        notPure = _operator;
-        _from;
-        _tokenId;
-        _data;
-        return BENSYCTest.onERC721Received.selector;
+        bensyc.transferFrom(address(this), address(_notReceiver), 0);
     }
 }
