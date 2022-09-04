@@ -12,9 +12,9 @@ abstract contract ResolverBase {
 
     /// @dev : Modifier to allow only dev
     modifier onlyDev() {
-        if (msg.sender != BENSYC.Dev()) revert OnlyDev(
-            BENSYC.Dev(), msg.sender
-        );
+        if (msg.sender != BENSYC.Dev()) {
+            revert OnlyDev(BENSYC.Dev(), msg.sender);
+        }
 
         _;
     }
@@ -28,7 +28,9 @@ abstract contract ResolverBase {
     mapping(bytes4 => bool) public supportsInterface;
 
     modifier isValidToken(uint256 id) {
-        if (id >= BENSYC.totalSupply()) revert InvalidTokenID(id);
+        if (id >= BENSYC.totalSupply()) {
+            revert InvalidTokenID(id);
+        }
         _;
     }
 
@@ -128,11 +130,7 @@ contract Resolver is ResolverBase {
      * @dev : return default contenhash if no contenthash set
      * @param node : subdomain
      */
-    function contenthash(bytes32 node)
-        public
-        view
-        returns (bytes memory _hash)
-    {
+    function contenthash(bytes32 node) public view returns (bytes memory _hash) {
         _hash = _contenthash[node];
         if (_hash.length == 0) {
             _hash = _contenthash[bytes32(0)];
@@ -146,10 +144,7 @@ contract Resolver is ResolverBase {
      * @param node: subdomain
      * @param _hash: new contenthash
      */
-    function setContenthash(bytes32 node, bytes memory _hash)
-        external
-        onlyOwner(node)
-    {
+    function setContenthash(bytes32 node, bytes memory _hash) external onlyOwner(node) {
         _contenthash[node] = _hash;
         emit ContenthashChanged(node, _hash);
     }
@@ -163,29 +158,19 @@ contract Resolver is ResolverBase {
      * @param node : subdomain
      * @param _addr : new address
      */
-    function setAddress(bytes32 node, address _addr)
-        external
-        onlyOwner(node)
-    {
+    function setAddress(bytes32 node, address _addr) external onlyOwner(node) {
         _addrs[node][60] = abi.encodePacked(_addr);
         emit AddrChanged(node, _addr);
     }
 
-    event AddressChanged(
-        bytes32 indexed node,
-        uint256 coinType,
-        bytes newAddress
-    );
+    event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress);
 
     /**
      * @dev : change address of subdomain for <coin>
      * @param node : subdomain
      * @param coinType : <coin>
      */
-    function setAddress(bytes32 node, uint256 coinType, bytes memory _addr)
-        external
-        onlyOwner(node)
-    {
+    function setAddress(bytes32 node, uint256 coinType, bytes memory _addr) external onlyOwner(node) {
         _addrs[node][coinType] = _addr;
         emit AddressChanged(node, coinType, _addr);
     }
@@ -209,11 +194,7 @@ contract Resolver is ResolverBase {
      * @param coinType : <coin>
      * @return _addr : resolved address
      */
-    function addr(bytes32 node, uint256 coinType)
-        external
-        view
-        returns (bytes memory _addr)
-    {
+    function addr(bytes32 node, uint256 coinType) external view returns (bytes memory _addr) {
         _addr = _addrs[node][coinType];
         if (_addr.length == 0 && coinType == 60) {
             _addr = abi.encodePacked(ENS.owner(node));
@@ -235,21 +216,14 @@ contract Resolver is ResolverBase {
      * @param x : x-coordinate on elliptic curve
      * @param y : y-coordinate on elliptic curve
      */
-    function setPubkey(bytes32 node, bytes32 x, bytes32 y)
-        external
-        onlyOwner(node)
-    {
+    function setPubkey(bytes32 node, bytes32 x, bytes32 y) external onlyOwner(node) {
         pubkey[node] = PublicKey(x, y);
         emit PubkeyChanged(node, x, y);
     }
 
     mapping(bytes32 => mapping(string => string)) internal _text;
 
-    event TextRecordChanged(
-        bytes32 indexed node,
-        string indexed key,
-        string value
-    );
+    event TextRecordChanged(bytes32 indexed node, string indexed key, string value);
 
     /**
      * @dev : change text record
@@ -257,10 +231,7 @@ contract Resolver is ResolverBase {
      * @param key : key to change
      * @param value : value to set
      */
-    function setText(bytes32 node, string calldata key, string calldata value)
-        external
-        onlyOwner(node)
-    {
+    function setText(bytes32 node, string calldata key, string calldata value) external onlyOwner(node) {
         _text[node][key] = value;
         emit TextRecordChanged(node, key, value);
     }
@@ -270,10 +241,7 @@ contract Resolver is ResolverBase {
      * @param key : key to change
      * @param value : value to set
      */
-    function setDefaultText(string calldata key, string calldata value)
-        external
-        onlyDev
-    {
+    function setDefaultText(string calldata key, string calldata value) external onlyDev {
         _text[bytes32(0)][key] = value;
         emit TextRecordChanged(bytes32(0), key, value);
     }
@@ -284,11 +252,7 @@ contract Resolver is ResolverBase {
      * @param key : key to query
      * @return value : value
      */
-    function text(bytes32 node, string calldata key)
-        external
-        view
-        returns (string memory value)
-    {
+    function text(bytes32 node, string calldata key) external view returns (string memory value) {
         value = _text[node][key];
         if (bytes(value).length == 0) {
             if (bytes32(bytes(key)) == bytes32(bytes("avatar"))) {
@@ -313,10 +277,7 @@ contract Resolver is ResolverBase {
      * @param node : subdomain
      * @param _name : new name
      */
-    function setName(bytes32 node, string calldata _name)
-        external
-        onlyOwner(node)
-    {
+    function setName(bytes32 node, string calldata _name) external onlyOwner(node) {
         _text[node]["name"] = _name;
         emit NameChanged(node, _name);
     }
@@ -329,9 +290,7 @@ contract Resolver is ResolverBase {
     function name(bytes32 node) external view returns (string memory _name) {
         _name = _text[node]["name"];
         if (bytes(_name).length == 0) {
-            return string.concat(
-                BENSYC.Namehash2ID(node).toString(), ".boredensyachtclub.eth"
-            );
+            return string.concat(BENSYC.Namehash2ID(node).toString(), ".boredensyachtclub.eth");
         }
     }
 }

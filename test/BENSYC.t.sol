@@ -12,10 +12,15 @@ import "test/GenAddr.sol";
 contract CannotReceive721 {
     address _a = address(0xc0de4c0cac01a);
 }
-contract CanReceive721{
-        // @dev : generic onERC721Received tester
+
+contract CanReceive721 {
+    // @dev : generic onERC721Received tester
     address notPure;
-    function onERC721Received(address _operator, address _from, uint _tokenId, bytes memory _data) external returns(bytes4) {
+
+    function onERC721Received(address _operator, address _from, uint256 _tokenId, bytes memory _data)
+        external
+        returns (bytes4)
+    {
         notPure = _operator;
         _from;
         _tokenId;
@@ -23,6 +28,7 @@ contract CanReceive721{
         return CanReceive721.onERC721Received.selector;
     }
 }
+
 // @dev : Tester
 contract BENSYCTest is Test {
     using stdStorage for StdStorage;
@@ -37,13 +43,14 @@ contract BENSYCTest is Test {
     }
 
     BoredENSYachtClub public bensyc;
- 
+
     //XCCIP public _xccip;
     Resolver public resolver;
-    uint public mintPrice;
+    uint256 public mintPrice;
     iENS public ENS = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
     CannotReceive721 public _notReceiver;
     CanReceive721 public _isReceiver;
+
     constructor() {
         address deployer = address(this);
         address bensycAddr = deployer.genAddr(vm.getNonce(deployer) + 1);
@@ -75,9 +82,7 @@ contract BENSYCTest is Test {
 
     /// @dev : test minting one subdomain, verify ownership & resolver
     function testSubdomainMint() public {
-        bensyc.mint {
-            value: mintPrice
-        }();
+        bensyc.mint{value: mintPrice}();
         assertEq(bensyc.ownerOf(0), address(this));
         assertEq(bensyc.balanceOf(address(this)), 1);
         assertEq(ENS.owner(bensyc.ID2Namehash(0)), address(this));
@@ -86,28 +91,24 @@ contract BENSYCTest is Test {
 
     /// @dev : test minting out the entire supply one by one
     function testMintTokensIndividually() public {
-        uint maxSupply = 100;
-        for (uint i = 0; i < maxSupply; i++) {
-            bensyc.mint {
-                value: mintPrice
-            }();
+        uint256 maxSupply = 100;
+        for (uint256 i = 0; i < maxSupply; i++) {
+            bensyc.mint{value: mintPrice}();
             assertEq(bensyc.ownerOf(i), address(this));
             assertEq(ENS.owner(bensyc.ID2Namehash(i)), address(this));
             assertEq(ENS.resolver(bensyc.ID2Namehash(i)), address(bensyc.DefaultResolver()));
         }
         assertEq(bensyc.totalSupply(), 100);
-        vm.expectRevert(abi.encodeWithSelector(BENSYC.InvalidTokenID.selector, uint(100)));
-        bensyc.ownerOf(100); // 
-        assertEq(bensyc.ownerOf(99), address(this)); // 
+        vm.expectRevert(abi.encodeWithSelector(BENSYC.InvalidTokenID.selector, uint256(100)));
+        bensyc.ownerOf(100);
+        assertEq(bensyc.ownerOf(99), address(this));
     }
 
     /// @dev : test minting a batch with size < 13
     function testBatchMint() public {
-        uint batchSize = 10;
-        bensyc.batchMint {
-            value: batchSize * mintPrice
-        }(batchSize);
-        for (uint i = 0; i < batchSize; i++) {
+        uint256 batchSize = 10;
+        bensyc.batchMint{value: batchSize * mintPrice}(batchSize);
+        for (uint256 i = 0; i < batchSize; i++) {
             assertEq(bensyc.ownerOf(i), address(this));
             assertEq(ENS.owner(bensyc.ID2Namehash(i)), address(this));
             assertEq(ENS.resolver(bensyc.ID2Namehash(i)), address(bensyc.DefaultResolver()));
@@ -116,18 +117,14 @@ contract BENSYCTest is Test {
 
     /// @dev : verify that batchMint() fails when batchSize > 12
     function testCannotMintOversizedBatch() public {
-        uint batchSize = 13;
+        uint256 batchSize = 13;
         vm.expectRevert(abi.encodeWithSelector(BENSYC.OversizedBatch.selector));
-        bensyc.batchMint {
-            value: batchSize * mintPrice
-        }(batchSize);
+        bensyc.batchMint{value: batchSize * mintPrice}(batchSize);
     }
 
     /// @dev : verify that owner can transfer subdomain
     function testSubdomainTransfer() public {
-        bensyc.mint {
-            value: mintPrice
-        }();
+        bensyc.mint{value: mintPrice}();
         address _addr = bensyc.ownerOf(0);
         bensyc.transferFrom(_addr, address(0xc0de4c0cac01a), 0);
         _addr = bensyc.ownerOf(0);
@@ -135,27 +132,23 @@ contract BENSYCTest is Test {
     }
 
     /// @dev : verify that contract (= parent controller) cannot transfer a subdomain
-    function testContractCannotTransfer() public {
-        bensyc.mint {
-            value: mintPrice
-        }();
-        vm.expectRevert(abi.encodeWithSelector(BENSYC.NotSubdomainOwner.selector, address(this), address(0xc0de4c0cac01a), 0));
+    function testControllerContractCannotTransfer() public {
+        bensyc.mint{value: mintPrice}();
+        vm.expectRevert(
+            abi.encodeWithSelector(BENSYC.NotSubdomainOwner.selector, address(this), address(0xc0de4c0cac01a), 0)
+        );
         bensyc.transferFrom(address(0xc0de4c0cac01a), address(0xc0de4c0cac01a), 0);
     }
 
-    /// @dev : verify that contract (= parent controller) cannot transfer a subdomain
-    function testValidContractCanRecive() public {
-        bensyc.mint {
-            value: mintPrice
-        }();
+    /// @dev : verify that valid contract can receive a subdomain
+    function testExternalContractCanReceive() public {
+        bensyc.mint{value: mintPrice}();
         bensyc.transferFrom(address(this), address(_isReceiver), 0);
     }
 
-    /// @dev : verify that contract cannot receive a subdomain
-    function testContractCannotReceive() public {
-        bensyc.mint {
-            value: mintPrice
-        }();
+    /// @dev : verify that contract (= parent controller) cannot receive a subdomain
+    function testControllerContractCannotReceive() public {
+        bensyc.mint{value: mintPrice}();
         vm.expectRevert(abi.encodeWithSelector(BENSYC.ERC721IncompatibleReceiver.selector, address(_notReceiver)));
         bensyc.transferFrom(address(this), address(_notReceiver), 0);
     }

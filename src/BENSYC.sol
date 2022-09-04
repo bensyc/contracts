@@ -30,10 +30,7 @@ contract BoredENSYachtClub is BENSYC {
         //bytes32 _hash =
         //    keccak256(abi.encodePacked(bytes32(0), keccak256("eth")));
         DomainHash = keccak256(
-            abi.encodePacked(
-                keccak256(abi.encodePacked(bytes32(0), keccak256("eth"))),
-                keccak256("boredensyachtclub")
-            )
+            abi.encodePacked(keccak256(abi.encodePacked(bytes32(0), keccak256("eth"))), keccak256("boredensyachtclub"))
         );
         maxSupply = _maxSupply;
         // Interface
@@ -49,12 +46,7 @@ contract BoredENSYachtClub is BENSYC {
      * @param id : token ID
      * @return : address of owner
      */
-    function ownerOf(uint256 id)
-        public
-        view
-        isValidToken(id)
-        returns (address)
-    {
+    function ownerOf(uint256 id) public view isValidToken(id) returns (address) {
         return _ownerOf[id];
     }
 
@@ -63,12 +55,7 @@ contract BoredENSYachtClub is BENSYC {
      * @param id : token ID
      * @return : namehash of corresponding subdomain
      */
-    function ID2Namehash(uint256 id)
-        public
-        view
-        isValidToken(id)
-        returns (bytes32)
-    {
+    function ID2Namehash(uint256 id) public view isValidToken(id) returns (bytes32) {
         return keccak256(abi.encodePacked(DomainHash, ID2Labelhash[id]));
     }
 
@@ -76,22 +63,21 @@ contract BoredENSYachtClub is BENSYC {
      * @dev mint() function for single sudomain
      */
     function mint() external payable {
-        if (!active) 
+        if (!active) {
             revert MintingPaused();
+        }
 
-        if (totalSupply >= maxSupply) 
+        if (totalSupply >= maxSupply) {
             revert MintEnded();
+        }
 
-        if (msg.value < mintPrice) 
-            revert InsufficientEtherSent(
-                mintPrice, msg.value
-            );
+        if (msg.value < mintPrice) {
+            revert InsufficientEtherSent(mintPrice, msg.value);
+        }
 
         uint256 _id = totalSupply;
         bytes32 _labelhash = keccak256(abi.encodePacked(_id.toString()));
-        ENS.setSubnodeRecord(
-            DomainHash, _labelhash, msg.sender, DefaultResolver, 0
-        );
+        ENS.setSubnodeRecord(DomainHash, _labelhash, msg.sender, DefaultResolver, 0);
         ID2Labelhash[_id] = _labelhash;
         Namehash2ID[keccak256(abi.encodePacked(DomainHash, _labelhash))] = _id;
         unchecked {
@@ -107,25 +93,25 @@ contract BoredENSYachtClub is BENSYC {
      * @param batchSize : number of subdomains to mint in the batch (maximum batchSize = 12)
      */
     function batchMint(uint256 batchSize) external payable {
-        if (!active)
+        if (!active) {
             revert MintingPaused();
+        }
 
-        if (batchSize > 12 || totalSupply + batchSize > maxSupply) // maximum batchSize = floor of [12, maxSupply - totalSupply]
+        if (batchSize > 12 || totalSupply + batchSize > maxSupply) {
+            // maximum batchSize = floor of [12, maxSupply - totalSupply]
             revert OversizedBatch();
+        }
 
-        if (msg.value < mintPrice * batchSize) 
-            revert InsufficientEtherSent(
-                mintPrice * batchSize, msg.value
-            );
+        if (msg.value < mintPrice * batchSize) {
+            revert InsufficientEtherSent(mintPrice * batchSize, msg.value);
+        }
 
         uint256 _id = totalSupply;
         uint256 _mint = _id + batchSize;
         bytes32 _labelhash;
         while (_id < _mint) {
             _labelhash = keccak256(abi.encodePacked(_id.toString()));
-            ENS.setSubnodeRecord(
-                DomainHash, _labelhash, msg.sender, DefaultResolver, 0
-            );
+            ENS.setSubnodeRecord(DomainHash, _labelhash, msg.sender, DefaultResolver, 0);
             ID2Labelhash[_id] = _labelhash;
             Namehash2ID[keccak256(abi.encodePacked(DomainHash, _labelhash))] = _id;
             _ownerOf[_id] = msg.sender;
@@ -146,22 +132,18 @@ contract BoredENSYachtClub is BENSYC {
      * @param to : address of receiver
      * @param id : subdomain token ID
      */
-    function _transfer(address from, address to, uint256 id, bytes memory data)
-        internal
-    {
-        if (to == address(0)) 
+    function _transfer(address from, address to, uint256 id, bytes memory data) internal {
+        if (to == address(0)) {
             revert ZeroAddress();
+        }
 
-        if (_ownerOf[id] != from) 
-            revert NotSubdomainOwner(
-                _ownerOf[id], from, id
-            );
+        if (_ownerOf[id] != from) {
+            revert NotSubdomainOwner(_ownerOf[id], from, id);
+        }
 
-        if (
-            msg.sender != _ownerOf[id]
-            && !isApprovedForAll[from][msg.sender]
-            && msg.sender != getApproved[id]
-        ) revert Unauthorized(msg.sender, from, id);
+        if (msg.sender != _ownerOf[id] && !isApprovedForAll[from][msg.sender] && msg.sender != getApproved[id]) {
+            revert Unauthorized(msg.sender, from, id);
+        }
 
         ENS.setSubnodeOwner(DomainHash, ID2Labelhash[id], to);
         unchecked {
@@ -173,8 +155,9 @@ contract BoredENSYachtClub is BENSYC {
         emit Transfer(from, to, id);
         if (to.code.length > 0) {
             try iERC721Receiver(to).onERC721Received(msg.sender, from, id, data) returns (bytes4 retval) {
-                if (retval != iERC721Receiver.onERC721Received.selector)
+                if (retval != iERC721Receiver.onERC721Received.selector) {
                     revert ERC721IncompatibleReceiver(to);
+                }
             } catch {
                 revert ERC721IncompatibleReceiver(to);
             }
@@ -187,10 +170,7 @@ contract BoredENSYachtClub is BENSYC {
      * @param to : to address
      * @param id : token ID
      */
-    function transferFrom(address from, address to, uint256 id)
-        external
-        payable
-    {
+    function transferFrom(address from, address to, uint256 id) external payable {
         _transfer(from, to, id, "");
     }
 
@@ -201,15 +181,7 @@ contract BoredENSYachtClub is BENSYC {
      * @param id : token ID
      * @param data : extra data
      */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        bytes memory data
-    )
-        external
-        payable
-    {
+    function safeTransferFrom(address from, address to, uint256 id, bytes memory data) external payable {
         _transfer(from, to, id, data);
     }
 
@@ -219,10 +191,7 @@ contract BoredENSYachtClub is BENSYC {
      * @param to : to address
      * @param id : token ID
      */
-    function safeTransferFrom(address from, address to, uint256 id)
-        external
-        payable
-    {
+    function safeTransferFrom(address from, address to, uint256 id) external payable {
         _transfer(from, to, id, "");
     }
 
@@ -232,9 +201,9 @@ contract BoredENSYachtClub is BENSYC {
      * @param id : token ID
      */
     function approve(address approved, uint256 id) external payable {
-        if (msg.sender != _ownerOf[id]) revert Unauthorized(
-            msg.sender, _ownerOf[id], id
-        );
+        if (msg.sender != _ownerOf[id]) {
+            revert Unauthorized(msg.sender, _ownerOf[id], id);
+        }
 
         getApproved[id] = approved;
         emit Approval(msg.sender, approved, id);
@@ -245,10 +214,7 @@ contract BoredENSYachtClub is BENSYC {
      * @param operator : operator address to be set as Controller
      * @param approved : bool to set
      */
-    function setApprovalForAll(address operator, bool approved)
-        external
-        payable
-    {
+    function setApprovalForAll(address operator, bool approved) external payable {
         isApprovedForAll[msg.sender][operator] = approved;
         emit ApprovalForAll(msg.sender, operator, approved);
     }
@@ -258,12 +224,7 @@ contract BoredENSYachtClub is BENSYC {
      * @param id : token ID
      * @return : IPFS path to metadata directory
      */
-    function tokenURI(uint256 id)
-        external
-        view
-        isValidToken(id)
-        returns (string memory)
-    {
+    function tokenURI(uint256 id) external view isValidToken(id) returns (string memory) {
         return string.concat("ipfs://", metaIPFS, "/", id.toString(), ".json");
     }
 
@@ -273,11 +234,7 @@ contract BoredENSYachtClub is BENSYC {
      * @param _salePrice : sale price
      * @return : ether amount to be paid as royalty to Dev (or multi-sig)
      */
-    function royaltyInfo(uint256 id, uint256 _salePrice)
-        external
-        view
-        returns (address, uint256)
-    {
+    function royaltyInfo(uint256 id, uint256 _salePrice) external view returns (address, uint256) {
         id; //silence warning
         return (Dev, _salePrice / 100 * royalty);
     }

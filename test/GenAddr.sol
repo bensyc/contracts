@@ -7,7 +7,7 @@ library GenAddr {
     /// @param deployer : Address of contract deployer
     /// @param nonce : Nonce for contract deployment
     /// @return Address of contract deployed at nonce
-    function genAddr(address deployer, uint nonce) internal pure returns(address) {
+    function genAddr(address deployer, uint256 nonce) internal pure returns (address) {
         bytes memory _hash;
         if (nonce == 0x00) {
             _hash = abi.encodePacked(bytes1(0xd6), bytes1(0x94), deployer, bytes1(0x80));
@@ -22,6 +22,6 @@ library GenAddr {
         } else {
             _hash = abi.encodePacked(bytes1(0xda), bytes1(0x94), deployer, bytes1(0x84), uint32(nonce));
         }
-        return address(uint160(uint(keccak256(_hash))));
+        return address(uint160(uint256(keccak256(_hash))));
     }
 }

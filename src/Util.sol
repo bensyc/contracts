@@ -35,11 +35,7 @@ library Util {
      * @param buffer : bytes to be converted to hex
      * @return : hex string
      */
-    function toHexString(bytes memory buffer)
-        internal
-        pure
-        returns (string memory)
-    {
+    function toHexString(bytes memory buffer) internal pure returns (string memory) {
         bytes memory converted = new bytes(buffer.length * 2);
         bytes memory _base = "0123456789abcdef";
         for (uint256 i; i < buffer.length; i++) {

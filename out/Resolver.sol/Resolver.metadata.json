@@ -6,36 +6,15 @@
   "output": {
     "abi": [
       {
-        "inputs": [],
-        "name": "ContractPaused",
-        "type": "error"
-      },
-      {
         "inputs": [
           {
             "internalType": "address",
-            "name": "addr",
+            "name": "_bensyc",
             "type": "address"
           }
         ],
-        "name": "ERC721IncompatibleReceiver",
-        "type": "error"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "size",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "yourSize",
-            "type": "uint256"
-          }
-        ],
-        "name": "InsufficientEtherSent",
-        "type": "error"
+        "stateMutability": "nonpayable",
+        "type": "constructor"
       },
       {
         "inputs": [
@@ -46,11 +25,6 @@
           }
         ],
         "name": "InvalidTokenID",
-        "type": "error"
-      },
-      {
-        "inputs": [],
-        "name": "MintEnded",
         "type": "error"
       },
       {
@@ -91,11 +65,6 @@
         "type": "error"
       },
       {
-        "inputs": [],
-        "name": "OversizedBatch",
-        "type": "error"
-      },
-      {
         "inputs": [
           {
             "internalType": "address",
@@ -117,33 +86,22 @@
         "type": "error"
       },
       {
-        "inputs": [],
-        "name": "ZeroAddress",
-        "type": "error"
-      },
-      {
         "anonymous": false,
         "inputs": [
           {
             "indexed": true,
-            "internalType": "address",
-            "name": "_owner",
-            "type": "address"
+            "internalType": "bytes32",
+            "name": "node",
+            "type": "bytes32"
           },
           {
-            "indexed": true,
+            "indexed": false,
             "internalType": "address",
-            "name": "approved",
+            "name": "addr",
             "type": "address"
-          },
-          {
-            "indexed": true,
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
           }
         ],
-        "name": "Approval",
+        "name": "AddrChanged",
         "type": "event"
       },
       {
@@ -151,24 +109,24 @@
         "inputs": [
           {
             "indexed": true,
-            "internalType": "address",
-            "name": "_owner",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "operator",
-            "type": "address"
+            "internalType": "bytes32",
+            "name": "node",
+            "type": "bytes32"
           },
           {
             "indexed": false,
-            "internalType": "bool",
-            "name": "approved",
-            "type": "bool"
+            "internalType": "uint256",
+            "name": "coinType",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "bytes",
+            "name": "newAddress",
+            "type": "bytes"
           }
         ],
-        "name": "ApprovalForAll",
+        "name": "AddressChanged",
         "type": "event"
       },
       {
@@ -201,75 +159,12 @@
           },
           {
             "indexed": false,
-            "internalType": "address",
-            "name": "a",
-            "type": "address"
-          }
-        ],
-        "name": "ERC20AddressChanged",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "internalType": "bytes32",
-            "name": "node",
-            "type": "bytes32"
-          },
-          {
-            "indexed": false,
             "internalType": "string",
             "name": "name",
             "type": "string"
           }
         ],
         "name": "NameChanged",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "internalType": "bytes32",
-            "name": "node",
-            "type": "bytes32"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "coinType",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "bytes",
-            "name": "newAddress",
-            "type": "bytes"
-          }
-        ],
-        "name": "NonERCAddressChanged",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "previousOwner",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "newOwner",
-            "type": "address"
-          }
-        ],
-        "name": "OwnershipTransferred",
         "type": "event"
       },
       {
@@ -323,33 +218,21 @@
         "type": "event"
       },
       {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "from",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "to",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          }
-        ],
-        "name": "Transfer",
-        "type": "event"
-      },
-      {
         "stateMutability": "payable",
         "type": "fallback"
+      },
+      {
+        "inputs": [],
+        "name": "BENSYC",
+        "outputs": [
+          {
+            "internalType": "contract iBENSYC",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
         "inputs": [],
@@ -373,113 +256,12 @@
       },
       {
         "inputs": [],
-        "name": "DefaultResolver",
-        "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "Dev",
-        "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
         "name": "ENS",
         "outputs": [
           {
             "internalType": "contract iENS",
             "name": "",
             "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "name": "ID2Labelhash",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "name": "Namehash2ID",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "name": "_text",
-        "outputs": [
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "active",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
           }
         ],
         "stateMutability": "view",
@@ -531,25 +313,6 @@
       {
         "inputs": [
           {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "balanceOf",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
             "internalType": "bytes32",
             "name": "node",
             "type": "bytes32"
@@ -561,88 +324,6 @@
             "internalType": "bytes",
             "name": "_hash",
             "type": "bytes"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "contractURI",
-        "outputs": [
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "name": "getApproved",
-        "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "isApprovedForAll",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "metaIPFS",
-        "outputs": [
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "mintPrice",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
           }
         ],
         "stateMutability": "view",
@@ -686,19 +367,6 @@
             "internalType": "bytes32",
             "name": "y",
             "type": "bytes32"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "royalty",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
           }
         ],
         "stateMutability": "view",
@@ -772,6 +440,24 @@
           }
         ],
         "name": "setDefaultContenthash",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "key",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "value",
+            "type": "string"
+          }
+        ],
+        "name": "setDefaultText",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -878,19 +564,6 @@
         "type": "function"
       },
       {
-        "inputs": [],
-        "name": "symbol",
-        "outputs": [
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
         "inputs": [
           {
             "internalType": "bytes32",
@@ -916,19 +589,6 @@
       },
       {
         "inputs": [],
-        "name": "totalSupply",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
         "name": "withdrawEther",
         "outputs": [],
         "stateMutability": "payable",
@@ -940,6 +600,11 @@
             "internalType": "address",
             "name": "token",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bal",
+            "type": "uint256"
           }
         ],
         "name": "withdrawToken",
@@ -955,13 +620,16 @@
     "devdoc": {
       "kind": "dev",
       "methods": {
+        "DefaultContenthash()": {
+          "details": ": default contenthash (encoded from IPNS hash)"
+        },
         "addr(bytes32)": {
           "details": ": default subdomain to owner if no address is set for Ethereum [60]",
           "params": {
             "node": ": sundomain"
           },
           "returns": {
-            "_0": ": resolved address "
+            "_0": ": resolved address"
           }
         },
         "addr(bytes32,uint256)": {
@@ -971,7 +639,7 @@
             "node": ": sundomain"
           },
           "returns": {
-            "_addr": ": resolved address "
+            "_addr": ": resolved address"
           }
         },
         "contenthash(bytes32)": {
@@ -1014,6 +682,13 @@
           "details": ": sets default contenthash",
           "params": {
             "_content": ": default contenthash to set"
+          }
+        },
+        "setDefaultText(string,string)": {
+          "details": ": set default text record <onlyDev>",
+          "params": {
+            "key": ": key to change",
+            "value": ": value to set"
           }
         },
         "setInterface(bytes4,bool)": {
@@ -1059,16 +734,12 @@
         "withdrawEther()": {
           "details": ": withdraw ether only to Dev (or multi-sig)"
         },
-        "withdrawToken(address)": {
+        "withdrawToken(address,uint256)": {
           "details": ": to be used in case some tokens get locked in the contract",
           "params": {
+            "bal": ": token balance to withdraw",
             "token": ": token to release"
           }
-        }
-      },
-      "stateVariables": {
-        "DefaultContenthash": {
-          "details": ": default contenthash (encoded from IPNS hash) "
         }
       },
       "title": "BENSYC Resolver",
@@ -1103,36 +774,28 @@
     ]
   },
   "sources": {
-    "src/Base.sol": {
-      "keccak256": "0x644bdda44da2e8d13daaa5ea8715c15f235dc363dbe4858f36ab679f74ffe800",
-      "license": "WTFPL v6.9",
-      "urls": [
-        "bzz-raw://960d5fdef7e384d77f9377a302f68d59c774511ee0a85f2c6bc0ba6b521dc56c",
-        "dweb:/ipfs/QmSnyzzaCunHGRNKgMLQAobPb9FsKXDPFfZJreb5fYaAeX"
-      ]
-    },
     "src/Interface.sol": {
-      "keccak256": "0xfc6beeebd98ac1af96e397169367c21d5fc1d437ab3b1bcbebf438bcc3e44f80",
+      "keccak256": "0x1c30b7bf9c633f1ac0e5121e3b5973ec40dfd71fe50b0eddf9f1d740e14c9ddc",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://b74d51af382e378a430bbefa8171960e1c82cd9e8ad70f478d53a2e11381a3d1",
-        "dweb:/ipfs/QmPAXwhc6JvQBgbcSNpeeRzMBuwJf7SoZiLpiEkZXD7sFV"
+        "bzz-raw://1535b06ae10b00b959bf111c403457bfb42c50ae81111cb809064707a3c3d320",
+        "dweb:/ipfs/QmP4JtzXF3WoxUdkdRM41h9Lk1UWXkzCjLfQ3RWYWoaLLx"
       ]
     },
     "src/Resolver.sol": {
-      "keccak256": "0x2a737b9a885b9785a4865baadfdff3bcbc8cf233bf7a9fd01cafd38e513a2b76",
+      "keccak256": "0x430081dc31e93092160f2af1ba4bbda6f62d3736e7ff369cc3c06f4821b4cc20",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://0cf8c86cafdc5b200151458814080ac7a8fd11494d20ddf0d0108a9fa86fdd67",
-        "dweb:/ipfs/QmcoEkoMWsyfJkRXRKDdsR8Es8JUjdEHJg5tZ5RjL4PT1G"
+        "bzz-raw://cc428ad466bdae705c7cdeba919ec5f44b0215937b987851a5fe1685cbd7929c",
+        "dweb:/ipfs/QmdnwrTwk5pMRb8YS2GuPwqwqZXKotRXXvSGVFbon9AmdK"
       ]
     },
     "src/Util.sol": {
-      "keccak256": "0x591775a2a931be3a66685902710b7de65bbe69a848dd2ade299c0f4bbe1773dd",
+      "keccak256": "0x53c587dce24bb2fbc62d82f72778b2d96327371c7d8dfe296f4e20f059489a8d",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://5a4b49393e31ccb57ecf89a2924efde81ac4c7b40c4c17d1129b6675a1b8c37f",
-        "dweb:/ipfs/QmR9VfUNE7WEduVRrRoQetUdtTkqweMhzew5L4HDsEC43i"
+        "bzz-raw://a72c00f7688ace5f4c33786dd513398930520474afb88e4e86c27afced8b3503",
+        "dweb:/ipfs/QmV7vUgtgtN8Ssq1Zxuz4e3aecNVJy7mqEHPuJg1UrKHv5"
       ]
     }
   },

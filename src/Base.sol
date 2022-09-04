@@ -24,7 +24,9 @@ abstract contract BENSYC {
 
     /// @dev : Modifier to allow only dev
     modifier onlyDev() {
-        if (msg.sender != Dev) revert OnlyDev(Dev, msg.sender);
+        if (msg.sender != Dev) {
+            revert OnlyDev(Dev, msg.sender);
+        }
         _;
     }
 
@@ -42,8 +44,7 @@ abstract contract BENSYC {
     uint256 public mintPrice = 0.01 ether;
 
     /// @dev : Opensea Contract URI
-    string public contractURI =
-        "ipfs://QmceyxoNqfPv1LNfYnmgxasXr8m8ghC3TbYuFbbqhH8pfV";
+    string public contractURI = "ipfs://QmceyxoNqfPv1LNfYnmgxasXr8m8ghC3TbYuFbbqhH8pfV";
 
     /// @dev : ERC2981 Royalty info; 5 = 5%
     uint256 public royalty = 5;
@@ -61,20 +62,9 @@ abstract contract BENSYC {
     mapping(bytes32 => uint256) public Namehash2ID;
 
     event Transfer(address indexed from, address indexed to, uint256 indexed id);
-    event Approval(
-        address indexed _owner,
-        address indexed approved,
-        uint256 indexed id
-    );
-    event ApprovalForAll(
-        address indexed _owner,
-        address indexed operator,
-        bool approved
-    );
-    event OwnershipTransferred(
-        address indexed previousOwner,
-        address indexed newOwner
-    );
+    event Approval(address indexed _owner, address indexed approved, uint256 indexed id);
+    event ApprovalForAll(address indexed _owner, address indexed operator, bool approved);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     error Unauthorized(address operator, address owner, uint256 id);
     error NotSubdomainOwner(address owner, address from, uint256 id);
@@ -88,7 +78,9 @@ abstract contract BENSYC {
     error OversizedBatch();
 
     modifier isValidToken(uint256 id) {
-        if (id >= totalSupply) revert InvalidTokenID(id);
+        if (id >= totalSupply) {
+            revert InvalidTokenID(id);
+        }
         _;
     }
 
@@ -115,9 +107,7 @@ abstract contract BENSYC {
      * @param token : token to release
      */
     function withdrawToken(address token) external payable {
-        iERC20(token).transferFrom(
-            address(this), Dev, iERC20(token).balanceOf(address(this))
-        );
+        iERC20(token).transferFrom(address(this), Dev, iERC20(token).balanceOf(address(this)));
     }
 
     /// @dev : revert on fallback
