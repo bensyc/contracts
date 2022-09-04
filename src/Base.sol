@@ -76,6 +76,7 @@ abstract contract BENSYC {
     error MintEnded();
     error ZeroAddress();
     error OversizedBatch();
+    error TooSoonToMint();
 
     modifier isValidToken(uint256 id) {
         if (id >= totalSupply) {

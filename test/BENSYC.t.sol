@@ -55,9 +55,9 @@ contract BENSYCTest is Test {
         address deployer = address(this);
         address bensycAddr = deployer.genAddr(vm.getNonce(deployer) + 1);
         resolver = new Resolver(bensycAddr);
-        bensyc = new BoredENSYachtClub(address(resolver), 100);
+        uint256 startTime = block.timestamp;
+        bensyc = new BoredENSYachtClub(address(resolver), 100, startTime);
         require(address(bensyc) == bensycAddr, "CRITICAL: ADDRESSES NOT MATCHING");
-
         _notReceiver = new CannotReceive721();
         _isReceiver = new CanReceive721();
         mintPrice = bensyc.mintPrice();

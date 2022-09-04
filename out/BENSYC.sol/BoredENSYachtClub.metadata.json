@@ -16,6 +16,11 @@
             "internalType": "uint256",
             "name": "_maxSupply",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_startTime",
+            "type": "uint256"
           }
         ],
         "stateMutability": "nonpayable",
@@ -109,6 +114,11 @@
       {
         "inputs": [],
         "name": "OversizedBatch",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "TooSoonToMint",
         "type": "error"
       },
       {
@@ -730,6 +740,19 @@
         "type": "function"
       },
       {
+        "inputs": [],
+        "name": "startTime",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [
           {
             "internalType": "bytes4",
@@ -888,7 +911,12 @@
           }
         },
         "constructor": {
-          "details": "Constructor"
+          "details": "Constructor",
+          "params": {
+            "_maxSupply": ": maximum supply of subdomains",
+            "_resolver": ": default Resolver",
+            "_startTime": ": start time of mint"
+          }
         },
         "mint()": {
           "details": "mint() function for single sudomain"
@@ -1006,6 +1034,12 @@
       "stateVariables": {
         "DomainHash": {
           "details": ": namehash of 'boredensyachtclub.eth'"
+        },
+        "maxSupply": {
+          "details": ": maximum supply of subdomains"
+        },
+        "startTime": {
+          "details": ": start time of mint"
         }
       },
       "title": "BENSYC Core",
@@ -1037,19 +1071,19 @@
   },
   "sources": {
     "src/BENSYC.sol": {
-      "keccak256": "0x08b0306f5ff0652728bc1bb171d87093b382826909bdcf9ded75c24033bb39c4",
+      "keccak256": "0x4bab97091a2f46d8ec55445db2ed4576b1c51bfe2c644cff4e57fca018f51ff6",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://72296c8520722396f537b3adbcef5f903578e0c0683bb1d95dd9968bf56e57af",
-        "dweb:/ipfs/QmXo91N8QpF6shWQbWG1RE5xV1PCdRMyNQ2ZEDsjM8faEU"
+        "bzz-raw://423b428609795c02c2032f363a11d6d78af28434336fbbf526060519f28c20b0",
+        "dweb:/ipfs/QmYAuPDYP2AYEn1AF472fBhE1LXV21mbxqb7ZdddfyV4ep"
       ]
     },
     "src/Base.sol": {
-      "keccak256": "0x1258d7f3c60805ecfec9bbdc43366747e9d4dc29432c53a846f4d02549e783ae",
+      "keccak256": "0x567db0e1bfe684367fcb2bf486f180e4e264a81559ee6468072e49508bec3278",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://cdf83da60f663c82702b7eafe469d556586a6be49c7adc8d057bc5e6599487c1",
-        "dweb:/ipfs/QmUAbJaUbcfrQbWYuJCjmbq1kLVBVKzXsuPwm7MRo7YQUp"
+        "bzz-raw://247dd7ad132a0f0345c2d185115a500b34b7f9cf090c69c4b85f41b10e7e6927",
+        "dweb:/ipfs/QmeoZ3fEszmaM824XJph7KuhWXu8ZWuq7ss439vosFbG34"
       ]
     },
     "src/Interface.sol": {

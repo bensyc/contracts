@@ -7,18 +7,24 @@ import "src/Resolver.sol";
 import "src/Interface.sol";
 import "src/XCCIP.sol";
 import "test/GenAddr.sol";
+import "src/Util.sol";
 
 contract BENSYCScript is Script {
     using GenAddr for address;
+    using Util for uint256;
+    using Util for bytes;
 
     function run() external {
         vm.startBroadcast();
+
+        /// @dev : Start time of minting
+        uint256 startTime = block.timestamp;
 
         /// @dev : Generate contract address before deployment
         address deployer = address(msg.sender);
         address bensycAddr = deployer.genAddr(vm.getNonce(deployer) + 1);
         Resolver resolver = new Resolver(bensycAddr);
-        BoredENSYachtClub _bensyc = new BoredENSYachtClub(address(resolver), 100); // change to 10K for mainnet
+        BoredENSYachtClub _bensyc = new BoredENSYachtClub(address(resolver), 100, startTime); // change to 10K for mainnet
 
         /// @dev : Check if generated address matches deployed address
         require(address(_bensyc) == bensycAddr, "CRITICAL: ADDRESSES NOT MATCHING");

@@ -14,25 +14,30 @@ contract BoredENSYachtClub is BENSYC {
     using Util for uint256;
     using Util for bytes;
 
-    // @dev : maximum supply of subdomains
+    /// @dev : maximum supply of subdomains
     uint256 public immutable maxSupply;
 
     /// @dev : namehash of 'boredensyachtclub.eth'
     bytes32 public immutable DomainHash;
 
+    /// @dev : start time of mint
+    uint256 public immutable startTime;
+
     /**
      * @dev Constructor
+     * @param _resolver : default Resolver
+     * @param _maxSupply : maximum supply of subdomains
+     * @param _startTime : start time of mint
      */
-    constructor(address _resolver, uint256 _maxSupply) {
+    constructor(address _resolver, uint256 _maxSupply, uint256 _startTime) {
         Dev = msg.sender;
         ENS = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
         DefaultResolver = _resolver;
-        //bytes32 _hash =
-        //    keccak256(abi.encodePacked(bytes32(0), keccak256("eth")));
         DomainHash = keccak256(
             abi.encodePacked(keccak256(abi.encodePacked(bytes32(0), keccak256("eth"))), keccak256("boredensyachtclub"))
         );
         maxSupply = _maxSupply;
+        startTime = _startTime;
         // Interface
         supportsInterface[type(iERC165).interfaceId] = true;
         supportsInterface[type(iERC173).interfaceId] = true;
@@ -67,6 +72,10 @@ contract BoredENSYachtClub is BENSYC {
             revert MintingPaused();
         }
 
+        if (block.timestamp < startTime) {
+            revert TooSoonToMint();
+        }
+
         if (totalSupply >= maxSupply) {
             revert MintEnded();
         }
@@ -95,6 +104,10 @@ contract BoredENSYachtClub is BENSYC {
     function batchMint(uint256 batchSize) external payable {
         if (!active) {
             revert MintingPaused();
+        }
+
+        if (block.timestamp < startTime) {
+            revert TooSoonToMint();
         }
 
         if (batchSize > 12 || totalSupply + batchSize > maxSupply) {
