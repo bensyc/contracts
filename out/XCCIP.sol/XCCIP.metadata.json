@@ -177,13 +177,6 @@
       },
       {
         "inputs": [],
-        "name": "DESTROY",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [],
         "name": "ENS",
         "outputs": [
           {
@@ -468,11 +461,11 @@
       ]
     },
     "src/XCCIP.sol": {
-      "keccak256": "0xd6173b74198165a7ac7e37566d4865b4f24e2ff0bc2a78b068bc2dd52543a18f",
+      "keccak256": "0x711b5395622db035cc47449f037f5b5941c2a3c0cdcb77f103295a7001ac6bf3",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://769e4fa0cc55f1c801ed2c3895c1b0f8f2d80f87735b1fc573d83b4939cd9d8d",
-        "dweb:/ipfs/QmeHUjuroqX7mwPnnDQXs7cv5Fxnr4ptHWjQJLPtFxL55Q"
+        "bzz-raw://a4b57a66fd07b1f1ced5b1202126694b3af43fba793906ee687bbe0bf1e22e82",
+        "dweb:/ipfs/QmQve8xfvABuGmvE3q5SZ9QzadKwgEHPymY7QN5nDBu5aF"
       ]
     }
   },

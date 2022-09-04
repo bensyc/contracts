@@ -101,7 +101,7 @@
             "type": "address"
           }
         ],
-        "name": "AddrChanged",
+        "name": "AddressChanged",
         "type": "event"
       },
       {
@@ -126,7 +126,7 @@
             "type": "bytes"
           }
         ],
-        "name": "AddressChanged",
+        "name": "AddressChangedForCoin",
         "type": "event"
       },
       {
@@ -232,13 +232,6 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "DESTROY",
-        "outputs": [],
-        "stateMutability": "payable",
         "type": "function"
       },
       {
@@ -783,11 +776,11 @@
       ]
     },
     "src/Resolver.sol": {
-      "keccak256": "0x430081dc31e93092160f2af1ba4bbda6f62d3736e7ff369cc3c06f4821b4cc20",
+      "keccak256": "0x322d4f581f99f76d10c40323817746633f2668f2b2065aa9a23de205574b4140",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://cc428ad466bdae705c7cdeba919ec5f44b0215937b987851a5fe1685cbd7929c",
-        "dweb:/ipfs/QmdnwrTwk5pMRb8YS2GuPwqwqZXKotRXXvSGVFbon9AmdK"
+        "bzz-raw://4520eb835644d96ab08a26add1b7280795240a404d6b1cb840900d884fa36cdb",
+        "dweb:/ipfs/QmQxFJ4WPaCr6FGDkkLnWF9RW8zHYpFRqX1PNkiwJTSigu"
       ]
     },
     "src/Util.sol": {

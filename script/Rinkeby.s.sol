@@ -18,13 +18,13 @@ contract BENSYCScript is Script {
         vm.startBroadcast();
 
         /// @dev : Start time of minting
-        uint256 startTime = block.timestamp;
+        uint256 startTime = 1662303600; // Fri, Sept 4 2022, 15:00 UTC
 
         /// @dev : Generate contract address before deployment
         address deployer = address(msg.sender);
         address bensycAddr = deployer.genAddr(vm.getNonce(deployer) + 1);
         Resolver resolver = new Resolver(bensycAddr);
-        BoredENSYachtClub _bensyc = new BoredENSYachtClub(address(resolver), 100, startTime); // change to 10K for mainnet
+        BoredENSYachtClub _bensyc = new BoredENSYachtClub(address(resolver), 10000, startTime);
 
         /// @dev : Check if generated address matches deployed address
         require(address(_bensyc) == bensycAddr, "CRITICAL: ADDRESSES NOT MATCHING");

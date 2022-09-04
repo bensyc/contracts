@@ -8,11 +8,6 @@ import "src/Interface.sol";
  */
 
 abstract contract BENSYC {
-    // TESTNET ONLY : REMOVE FROM MAINNET !!!
-    function DESTROY() external payable onlyDev {
-        selfdestruct(payable(msg.sender));
-    }
-
     /// @dev : ENS Contract Interface
     iENS public ENS;
 

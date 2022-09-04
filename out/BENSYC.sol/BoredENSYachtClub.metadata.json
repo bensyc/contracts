@@ -247,13 +247,6 @@
       },
       {
         "inputs": [],
-        "name": "DESTROY",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-      },
-      {
-        "inputs": [],
         "name": "DefaultResolver",
         "outputs": [
           {
@@ -1079,11 +1072,11 @@
       ]
     },
     "src/Base.sol": {
-      "keccak256": "0x567db0e1bfe684367fcb2bf486f180e4e264a81559ee6468072e49508bec3278",
+      "keccak256": "0x13fa722211aea7c1552a5ee46cdaaf676c3b2a44509fa3648620365266f25635",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://247dd7ad132a0f0345c2d185115a500b34b7f9cf090c69c4b85f41b10e7e6927",
-        "dweb:/ipfs/QmeoZ3fEszmaM824XJph7KuhWXu8ZWuq7ss439vosFbG34"
+        "bzz-raw://111fdadbae23d3455da6aadd779dc45ed6b9109f6cc380e91215e201f633715a",
+        "dweb:/ipfs/QmQXqJbD25Z9CUb1nFmGBK2Uyjk9SKX88vx7Riz3WtCzYH"
       ]
     },
     "src/Interface.sol": {

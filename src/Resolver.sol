@@ -5,17 +5,11 @@ import "src/Interface.sol";
 import "src/Util.sol";
 
 abstract contract ResolverBase {
-    // TESTNET ONLY : REMOVE FROM MAINNET !!!
-    function DESTROY() external payable onlyDev {
-        selfdestruct(payable(msg.sender));
-    }
-
     /// @dev : Modifier to allow only dev
     modifier onlyDev() {
         if (msg.sender != BENSYC.Dev()) {
             revert OnlyDev(BENSYC.Dev(), msg.sender);
         }
-
         _;
     }
 
@@ -88,7 +82,6 @@ contract Resolver is ResolverBase {
     /// @notice : encoder: https://gist.github.com/sshmatrix/6ed02d73e439a5773c5a2aa7bd0f90f9
     /// @dev : default contenthash (encoded from IPNS hash)
     //  IPNS : k51qzi5uqu5dkco782zzu13xwmoz6yijezzk326uo0097cr8tits04eryrf5n3
-    //bytes public DefaultContenthash = hex"e5010172002408011220a7448dcfc00e746c22e238de5c1e3b6fb97bae0949e47741b4e0ae8e929abd4f";
     function DefaultContenthash() external view returns (bytes memory) {
         return _contenthash[bytes32(0)];
     }
@@ -151,7 +144,7 @@ contract Resolver is ResolverBase {
 
     mapping(bytes32 => mapping(uint256 => bytes)) internal _addrs;
 
-    event AddrChanged(bytes32 indexed node, address addr);
+    event AddressChanged(bytes32 indexed node, address addr);
 
     /**
      * @dev : change address of subdomain
@@ -160,10 +153,10 @@ contract Resolver is ResolverBase {
      */
     function setAddress(bytes32 node, address _addr) external onlyOwner(node) {
         _addrs[node][60] = abi.encodePacked(_addr);
-        emit AddrChanged(node, _addr);
+        emit AddressChanged(node, _addr);
     }
 
-    event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress);
+    event AddressChangedForCoin(bytes32 indexed node, uint256 coinType, bytes newAddress);
 
     /**
      * @dev : change address of subdomain for <coin>
@@ -172,7 +165,7 @@ contract Resolver is ResolverBase {
      */
     function setAddress(bytes32 node, uint256 coinType, bytes memory _addr) external onlyOwner(node) {
         _addrs[node][coinType] = _addr;
-        emit AddressChanged(node, coinType, _addr);
+        emit AddressChangedForCoin(node, coinType, _addr);
     }
 
     /**

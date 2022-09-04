@@ -38,12 +38,6 @@ abstract contract Clone {
         require(msg.sender == BENSYC.Dev());
         iToken(_token).transferFrom(address(this), msg.sender, _bal);
     }
-
-    // TESTNET ONLY : REMOVE FROM MAINNET !!!
-    function DESTROY() external {
-        require(msg.sender == BENSYC.Dev());
-        selfdestruct(payable(msg.sender));
-    }
 }
 
 contract XCCIP is Clone {
