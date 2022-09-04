@@ -17,7 +17,7 @@ contract BENSYCScript is Script {
         vm.startBroadcast();
 
         /// @dev : Start time of minting
-        uint256 startTime = 1662724800;
+        uint256 startTime = 1662724800; // Fri, Sept 9 2022, 12:00 UTC
 
         /// @dev : Generate contract address before deployment
         address deployer = address(msg.sender);
