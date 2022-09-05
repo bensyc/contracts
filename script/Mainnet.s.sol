@@ -22,18 +22,17 @@ contract BENSYCScript is Script {
         /// @dev : Generate contract address before deployment
         address deployer = address(msg.sender);
         address bensycAddr = deployer.genAddr(vm.getNonce(deployer) + 1);
-
         Resolver resolver = new Resolver(bensycAddr);
         BoredENSYachtClub _bensyc = new BoredENSYachtClub(address(resolver), 10_000, startTime);
 
         /// @dev : Check if generated address matches deployed address
         require(address(_bensyc) == bensycAddr, "CRITICAL: ADDRESSES NOT MATCHING");
 
-        /// @dev : Set Resolver and Controller to contract
-        //iENS _ens = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
+        /// @dev : Set Resolver, Controller
+        iENS _ens = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
         //bytes32 _domainHash = _bensyc.DomainHash();
         //_ens.setResolver(_domainHash, address(_bensyc));
-        //_ens.setApprovalForAll(address(_bensyc), true);
+        _ens.setApprovalForAll(address(_bensyc), true);
 
         /// @dev : CCIP Call
         XCCIP xccip = new XCCIP(address(_bensyc));

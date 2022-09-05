@@ -4,6 +4,10 @@ pragma solidity >0.8.0 <0.9.0;
 import "src/Interface.sol";
 import "src/Util.sol";
 
+/**
+ * @dev : BENSYC Resolver Base
+ */
+ 
 abstract contract ResolverBase {
     /// @dev : Modifier to allow only dev
     modifier onlyDev() {
@@ -88,7 +92,7 @@ contract Resolver is ResolverBase {
 
     constructor(address _bensyc) {
         BENSYC = iBENSYC(_bensyc);
-
+        ENS = iENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
         supportsInterface[iResolver.addr.selector] = true;
         supportsInterface[iResolver.contenthash.selector] = true;
         supportsInterface[iResolver.pubkey.selector] = true;

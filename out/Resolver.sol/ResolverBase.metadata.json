@@ -172,6 +172,7 @@
       }
     ],
     "devdoc": {
+      "details": ": BENSYC Resolver Base",
       "kind": "dev",
       "methods": {
         "setInterface(bytes4,bool)": {
@@ -236,11 +237,11 @@
       ]
     },
     "src/Resolver.sol": {
-      "keccak256": "0x322d4f581f99f76d10c40323817746633f2668f2b2065aa9a23de205574b4140",
+      "keccak256": "0x3cc2c36ce6c82627052b9e0dad4d70b49fe46d1f24802bcabeb9ab2442cc63b8",
       "license": "WTFPL v6.9",
       "urls": [
-        "bzz-raw://4520eb835644d96ab08a26add1b7280795240a404d6b1cb840900d884fa36cdb",
-        "dweb:/ipfs/QmQxFJ4WPaCr6FGDkkLnWF9RW8zHYpFRqX1PNkiwJTSigu"
+        "bzz-raw://d0631f2a8d843053f990932d9e77e415a9147027adb272bc705b7ce6f51a7d98",
+        "dweb:/ipfs/QmS76gjwW4Bs9mMkKuzBzXdCPbGuhTyd4zwu8C6Lr5bpiG"
       ]
     },
     "src/Util.sol": {

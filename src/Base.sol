@@ -12,7 +12,7 @@ abstract contract BENSYC {
     iENS public ENS;
 
     /// @dev Pause/Resume contract
-    bool public active = true;
+    bool public active = false;
 
     /// @dev : Controller/Dev address
     address public Dev;
